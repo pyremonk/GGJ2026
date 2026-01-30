@@ -1,6 +1,6 @@
-# Blast Tempo - AI Agent Instructions
+# GGJ2026 - AI Agent Instructions
 
-**Blast Tempo** is a vertical-scrolling rhythm shoot 'em up built in Godot 4.5, combining grid-based combat with beat-synchronized movement.
+**GGJ2026** is a vertical-scrolling rhythm shoot 'em up built in Godot 4.5, combining grid-based combat with beat-synchronized movement.
 
 ## Architecture Overview
 
