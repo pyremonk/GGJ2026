@@ -6,7 +6,7 @@ extends Control
 signal beat_visual_complete
 
 @export var travel_duration_ms: float = 1000.0
-@export var target_position: Vector2 = Vector2(400, 300)
+@export var target_position_ratio: Vector2 = Vector2(0.5, 0.5)
 @export var bar_color: Color = Color.WHITE
 @export var target_color: Color = Color.GOLD
 
@@ -15,6 +15,7 @@ var _bar_current_position: Vector2 = Vector2.ZERO
 var _target_hit_time_ms: float = 0.0
 var _animation_start_time_ms: float = 0.0
 var _music_player: Node = null
+var target_position: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	# Position relative to parent
@@ -23,7 +24,8 @@ func _ready() -> void:
 	anchor_right = 1.0
 	anchor_bottom = 1.0
 	
-	_bar_start_position = Vector2(size.x * 0.1, size.y * 0.5)
+	_bar_start_position = Vector2(-50.0, size.y * 0.5)  # Start outside left viewport
+	target_position = Vector2(size.x * target_position_ratio.x, size.y * target_position_ratio.y)
 	_bar_current_position = _bar_start_position
 	queue_redraw()
 

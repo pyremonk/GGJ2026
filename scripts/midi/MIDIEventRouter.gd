@@ -100,6 +100,7 @@ func _generate_beats_from_notes() -> Array[BeatEvent]:
 	
 	var beat_number: int = 0
 	var accumulated_ticks: float = 0.0
+	var last_note_on_tick: float = -1000.0  # Track last accepted note to avoid duplicates
 	
 	for event in track_events:
 		if event == null:
@@ -120,14 +121,25 @@ func _generate_beats_from_notes() -> Array[BeatEvent]:
 		var subtype: int = int(subtype_value) if subtype_value is String else subtype_value
 		var velocity: int = int(velocity_value) if velocity_value is String else velocity_value
 		
+		# Debug: Print all note events
+		if event_type == "note":
+			print("  Note event: subtype=%d, velocity=%d, delta=%.0f, accum_ticks=%.0f" % [subtype, velocity, delta, accumulated_ticks])
+		
 		# Note-on: type="note" AND subtype=9 AND velocity > 0
 		var is_note_on: bool = (event_type == "note" and subtype == 9 and velocity > 0)
 		
 		if is_note_on:
+			# Skip duplicate notes at the same tick (within 10 ticks tolerance)
+			if abs(accumulated_ticks - last_note_on_tick) < 10:
+				print("    -> Note-on SKIPPED (duplicate at same tick)")
+				continue
+			
 			var time_ms: float = _ticks_to_ms(int(accumulated_ticks))
+			print("    -> Note-on ACCEPTED at tick %.0f (%.0fms)" % [accumulated_ticks, time_ms])
 			var beat: BeatEvent = BeatEvent.new(time_ms, beat_number)
 			beats.append(beat)
 			beat_number += 1
+			last_note_on_tick = accumulated_ticks
 	
 	print("  Found %d note-on events" % beats.size())
 	

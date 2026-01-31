@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dhp8v50whx5xu"]
+[gd_scene load_steps=10 format=3 uid="uid://dhp8v50whx5xu"]
 
 [ext_resource type="Script" uid="uid://dfk420f6o5k2r" path="res://scenes/rhythm_test/rhythm_test.gd" id="1_main"]
 [ext_resource type="Script" uid="uid://cwsymq7h76gjw" path="res://scripts/audio/MusicPlayer.gd" id="2_music"]
@@ -8,7 +8,6 @@
 [ext_resource type="Script" uid="uid://d13j1u14xjk5c" path="res://scripts/gameplay/Judge.gd" id="6_judge"]
 [ext_resource type="Script" uid="uid://ds0r002f5aq8u" path="res://scripts/gameplay/Referee.gd" id="7_referee"]
 [ext_resource type="Script" uid="uid://cwt721ilwuhk2" path="res://scripts/audio/LatencyCalibration.gd" id="8_calibration"]
-[ext_resource type="Script" uid="uid://dp5ooe5o5o1wy" path="res://scripts/ui/BeatIndicator.gd" id="9_indicator"]
 [ext_resource type="Script" uid="uid://bo3ljb4wg8ipr" path="res://scripts/ui/FeedbackDisplay.gd" id="10_feedback"]
 
 [node name="RhythmTest" type="Control"]
@@ -31,6 +30,7 @@ script = ExtResource("3_router")
 [node name="NoteScheduler" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("4_scheduler")
+lookahead_ms = 20000.0
 
 [node name="PlayerInput" type="Node" parent="."]
 unique_name_in_owner = true
@@ -47,7 +47,6 @@ script = ExtResource("7_referee")
 [node name="LatencyCalibration" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("8_calibration")
-num_calibration_beats = 12
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -58,9 +57,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -400.0
+offset_left = -687.0
 offset_top = -150.0
-offset_right = 400.0
+offset_right = 689.0
 offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -101,6 +100,56 @@ offset_bottom = 90.0
 theme_override_font_sizes/font_size = 24
 text = "Combo: 0"
 
+[node name="DebugLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 100.0
+offset_right = 300.0
+offset_bottom = 130.0
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Next beat: --"
+
+[node name="AudioDelayLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 140.0
+offset_right = 300.0
+offset_bottom = 170.0
+theme_override_colors/font_color = Color(0, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Audio Delay: 2000ms"
+
+[node name="BeatCountLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 180.0
+offset_right = 300.0
+offset_bottom = 210.0
+theme_override_colors/font_color = Color(1, 0.5, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Beats Rendered: 0 / 0"
+
+[node name="CompletedBeatsLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 220.0
+offset_right = 300.0
+offset_bottom = 250.0
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Beats Completed: 0"
+
+[node name="LookaheadLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 260.0
+offset_right = 300.0
+offset_bottom = 290.0
+theme_override_colors/font_color = Color(1, 0, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Lookahead: 5000ms"
+
 [node name="ConfigPanel" type="VBoxContainer" parent="UI"]
 unique_name_in_owner = true
 anchors_preset = 3
@@ -138,6 +187,32 @@ text = "Start"
 unique_name_in_owner = true
 layout_mode = 2
 text = "Calibrate Latency"
+
+[node name="HSeparator" type="HSeparator" parent="UI/ConfigPanel"]
+layout_mode = 2
+
+[node name="DelayDecreaseButton" type="Button" parent="UI/ConfigPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Audio Delay -100ms"
+
+[node name="DelayIncreaseButton" type="Button" parent="UI/ConfigPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Audio Delay +100ms"
+
+[node name="HSeparator2" type="HSeparator" parent="UI/ConfigPanel"]
+layout_mode = 2
+
+[node name="LookaheadDecreaseButton" type="Button" parent="UI/ConfigPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Lookahead -500ms"
+
+[node name="LookaheadIncreaseButton" type="Button" parent="UI/ConfigPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Lookahead +500ms"
 
 [node name="CalibrationUI" type="CanvasLayer" parent="."]
 unique_name_in_owner = true

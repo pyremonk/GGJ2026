@@ -6,7 +6,7 @@ extends Node
 signal upcoming_beat(beat: BeatEvent)
 signal beat_missed(beat: BeatEvent)
 
-@export var lookahead_ms: float = 2000.0
+@export var lookahead_ms: float = 5000.0
 
 var _beat_events: Array[BeatEvent] = []
 var _current_beat_index: int = 0

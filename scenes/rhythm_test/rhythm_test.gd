@@ -17,12 +17,21 @@ const FLYING_BEAT_INDICATOR_SCRIPT: String = "res://scripts/ui/FlyingBeatIndicat
 @onready var feedback_display: Label = %FeedbackDisplay
 @onready var score_label: Label = %ScoreLabel
 @onready var combo_label: Label = %ComboLabel
+@onready var debug_label: Label = %DebugLabel
+@onready var audio_delay_label: Label = %AudioDelayLabel
+@onready var beat_count_label: Label = %BeatCountLabel
+@onready var completed_beats_label: Label = %CompletedBeatsLabel
+@onready var lookahead_label: Label = %LookaheadLabel
 
 @onready var audio_file_button: Button = %AudioFileButton
 @onready var midi_file_button: Button = %MIDIFileButton
 @onready var subdivision_option: OptionButton = %SubdivisionOption
 @onready var start_button: Button = %StartButton
 @onready var calibrate_button: Button = %CalibrateButton
+@onready var delay_decrease_button: Button = %DelayDecreaseButton
+@onready var delay_increase_button: Button = %DelayIncreaseButton
+@onready var lookahead_decrease_button: Button = %LookaheadDecreaseButton
+@onready var lookahead_increase_button: Button = %LookaheadIncreaseButton
 
 @onready var calibration_ui: CanvasLayer = %CalibrationUI
 @onready var instruction_label: Label = %InstructionLabel
@@ -35,6 +44,9 @@ const FLYING_BEAT_INDICATOR_SCRIPT: String = "res://scripts/ui/FlyingBeatIndicat
 var _audio_stream: AudioStream = null
 var _midi_file_path: String = ""
 var _is_playing: bool = false
+var _total_beats_rendered: int = 0
+var _total_beats_in_song: int = 0
+var _completed_beats: int = 0
 
 func _ready() -> void:
 	_connect_signals()
@@ -60,6 +72,10 @@ func _connect_signals() -> void:
 	midi_file_button.pressed.connect(_on_midi_file_button_pressed)
 	start_button.pressed.connect(_on_start_button_pressed)
 	calibrate_button.pressed.connect(_on_calibrate_button_pressed)
+	delay_decrease_button.pressed.connect(_on_delay_decrease_pressed)
+	delay_increase_button.pressed.connect(_on_delay_increase_pressed)
+	lookahead_decrease_button.pressed.connect(_on_lookahead_decrease_pressed)
+	lookahead_increase_button.pressed.connect(_on_lookahead_increase_pressed)
 	
 	audio_file_dialog.file_selected.connect(_on_audio_file_selected)
 	midi_file_dialog.file_selected.connect(_on_midi_file_selected)
@@ -75,6 +91,11 @@ func _setup_ui() -> void:
 	
 	score_label.text = "Score: 0"
 	combo_label.text = "Combo: 0"
+	debug_label.text = "Next beat: --"
+	audio_delay_label.text = "Audio Delay: %.0fms" % music_player.audio_delay_ms
+	beat_count_label.text = "Beats Rendered: 0 / 0"
+	completed_beats_label.text = "Beats Completed: 0"
+	lookahead_label.text = "Lookahead: %.0fms" % note_scheduler.lookahead_ms
 
 func _load_default_files() -> void:
 	var default_audio_path: String = "res://assets/testing_track/Testing_Track.ogg"
@@ -146,6 +167,19 @@ func _start_playback() -> void:
 		push_error("RhythmTest: No beat events generated")
 		return
 	
+	# Debug: Print timing information
+	if beat_events.size() > 0:
+		print("First beat at: %.0fms" % beat_events[0].hit_time_ms)
+		print("Last beat at: %.0fms" % beat_events[-1].hit_time_ms)
+		if _audio_stream != null:
+			var audio_length_ms: float = _audio_stream.get_length() * 1000.0
+			print("Audio length: %.0fms" % audio_length_ms)
+			print("Last beat needs scheduling by: %.0fms" % (beat_events[-1].hit_time_ms - note_scheduler.lookahead_ms))
+	
+	_total_beats_in_song = beat_events.size()
+	_total_beats_rendered = 0
+	_completed_beats = 0
+	
 	note_scheduler.initialize(beat_events)
 	referee.reset()
 	
@@ -163,6 +197,22 @@ func _process(delta: float) -> void:
 	if _is_playing:
 		var current_time_ms: float = music_player.get_current_time_ms()
 		note_scheduler.update(current_time_ms)
+		
+		# Debug: Show offset from next beat
+		var next_beat: BeatEvent = note_scheduler.get_next_beat()
+		if next_beat != null:
+			var offset_from_beat: float = next_beat.hit_time_ms - current_time_ms
+			debug_label.text = "Next beat in: %.0fms" % offset_from_beat
+		else:
+			debug_label.text = "No more beats"
+		
+		# Update beat count label
+		beat_count_label.text = "Beats Rendered: %d / %d" % [_total_beats_rendered, _total_beats_in_song]
+		completed_beats_label.text = "Beats Completed: %d" % _completed_beats
+	else:
+		debug_label.text = "Next beat: --"
+		beat_count_label.text = "Beats Rendered: 0 / 0"
+		completed_beats_label.text = "Beats Completed: 0"
 
 func _on_player_input(action_name: String, input_time_ms: float) -> void:
 	if latency_calibration.is_calibrating():
@@ -202,6 +252,15 @@ func _on_upcoming_beat(beat: BeatEvent) -> void:
 	
 	# Initialize the flying indicator with beat timing and music player reference
 	flying_indicator.initialize(beat.hit_time_ms, current_time_ms, music_player)
+	
+	# Connect to beat completion signal
+	flying_indicator.beat_visual_complete.connect(_on_beat_visual_complete)
+	
+	# Track total beats rendered
+	_total_beats_rendered += 1
+
+func _on_beat_visual_complete() -> void:
+	_completed_beats += 1
 
 func _on_calibrate_button_pressed() -> void:
 	calibration_ui.visible = true
@@ -219,3 +278,20 @@ func _on_calibration_complete(offset_ms: float) -> void:
 	
 	await get_tree().create_timer(2.0).timeout
 	calibration_ui.visible = false
+
+func _on_delay_decrease_pressed() -> void:
+	music_player.audio_delay_ms -= 100.0
+	audio_delay_label.text = "Audio Delay: %.0fms" % music_player.audio_delay_ms
+
+func _on_delay_increase_pressed() -> void:
+	music_player.audio_delay_ms += 100.0
+	audio_delay_label.text = "Audio Delay: %.0fms" % music_player.audio_delay_ms
+
+func _on_lookahead_decrease_pressed() -> void:
+	note_scheduler.lookahead_ms -= 500.0
+	note_scheduler.lookahead_ms = maxf(note_scheduler.lookahead_ms, 0.0)
+	lookahead_label.text = "Lookahead: %.0fms" % note_scheduler.lookahead_ms
+
+func _on_lookahead_increase_pressed() -> void:
+	note_scheduler.lookahead_ms += 500.0
+	lookahead_label.text = "Lookahead: %.0fms" % note_scheduler.lookahead_ms
