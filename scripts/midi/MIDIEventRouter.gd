@@ -8,6 +8,22 @@ signal beat_event(beat: BeatEvent)
 @export var beat_subdivision: int = 4
 @export var target_track_index: int = 1
 
+## Maps MIDI notes to target directions (must match NoteSpawner)
+const TARGET_MAPPING: Dictionary = {
+	60: "right",   # C4
+	61: "right",   # C#4
+	62: "right",   # D4
+	63: "down",    # D#4
+	64: "down",    # E4
+	65: "down",    # F4
+	66: "left",    # F#4
+	67: "left",    # G4
+	68: "left",    # G#4
+	69: "up",      # A4
+	70: "up",      # A#4
+	71: "up"       # B4
+}
+
 var _midi_resource: Resource = null
 var _tempo_map: Array = []
 var _beat_events: Array[BeatEvent] = []
@@ -117,13 +133,15 @@ func _generate_beats_from_notes() -> Array[BeatEvent]:
 		var event_type: String = event.get("type", "")
 		var subtype_value = event.get("subtype", -1)
 		var velocity_value = event.get("data", 0)
+		var note_value = event.get("note", -1)  # MIDI note pitch
 		
 		var subtype: int = int(subtype_value) if subtype_value is String else subtype_value
 		var velocity: int = int(velocity_value) if velocity_value is String else velocity_value
+		var note_pitch: int = int(note_value) if note_value is String else note_value
 		
 		# Debug: Print all note events
 		if event_type == "note":
-			print("  Note event: subtype=%d, velocity=%d, delta=%.0f, accum_ticks=%.0f" % [subtype, velocity, delta, accumulated_ticks])
+			print("  Note event: subtype=%d, velocity=%d, note=%d, delta=%.0f, accum_ticks=%.0f" % [subtype, velocity, note_pitch, delta, accumulated_ticks])
 		
 		# Note-on: type="note" AND subtype=9 AND velocity > 0
 		var is_note_on: bool = (event_type == "note" and subtype == 9 and velocity > 0)
@@ -135,8 +153,9 @@ func _generate_beats_from_notes() -> Array[BeatEvent]:
 				continue
 			
 			var time_ms: float = _ticks_to_ms(int(accumulated_ticks))
-			print("    -> Note-on ACCEPTED at tick %.0f (%.0fms)" % [accumulated_ticks, time_ms])
-			var beat: BeatEvent = BeatEvent.new(time_ms, beat_number)
+			print("    -> Note-on ACCEPTED at tick %.0f (%.0fms), note=%d" % [accumulated_ticks, time_ms, note_pitch])
+			var direction: String = TARGET_MAPPING.get(note_pitch, "down")
+			var beat: BeatEvent = BeatEvent.new(time_ms, beat_number, note_pitch, direction)
 			beats.append(beat)
 			beat_number += 1
 			last_note_on_tick = accumulated_ticks

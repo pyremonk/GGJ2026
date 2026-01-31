@@ -1,0 +1,122 @@
+[gd_scene load_steps=15 format=3 uid="uid://i7qyfwoyxj74"]
+
+[ext_resource type="Script" uid="uid://da6x5ulbfqo7c" path="res://scenes/game_scene/gameplay_base.gd" id="1_w8vk8"]
+[ext_resource type="PackedScene" uid="uid://btfgjp5yah2lo" path="res://scenes/game_scene/note_targets.tscn" id="2_note_targets"]
+[ext_resource type="Texture2D" uid="uid://7pw5e0uajrv6" path="res://assets/temp_player/Temp-Player.png" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://bahffr0vbydb8" path="res://scenes/game_scene/ui/left_panel.tscn" id="4_left_panel"]
+[ext_resource type="PackedScene" uid="uid://bcfmgljt3hfkr" path="res://scenes/game_scene/ui/right_panel.tscn" id="5_right_panel"]
+[ext_resource type="Script" uid="uid://cwsymq7h76gjw" path="res://scripts/audio/MusicPlayer.gd" id="6_music"]
+[ext_resource type="Script" uid="uid://j6u8t266mo75" path="res://scripts/midi/MIDIEventRouter.gd" id="7_router"]
+[ext_resource type="Script" uid="uid://b2qnj1po244t8" path="res://scripts/midi/NoteScheduler.gd" id="8_scheduler"]
+[ext_resource type="Script" uid="uid://b12v1hxilkmem" path="res://scripts/gameplay/PlayerInput.gd" id="9_input"]
+[ext_resource type="Script" uid="uid://d13j1u14xjk5c" path="res://scripts/gameplay/Judge.gd" id="10_judge"]
+[ext_resource type="Script" uid="uid://ds0r002f5aq8u" path="res://scripts/gameplay/Referee.gd" id="11_referee"]
+[ext_resource type="PackedScene" uid="uid://bkxfp2m1ohvhf" path="res://scenes/game_scene/note.tscn" id="12_note"]
+[ext_resource type="Script" uid="uid://uk83hyg0spa" path="res://scripts/gameplay/NoteSpawner.gd" id="13_spawner"]
+[ext_resource type="Script" path="res://scripts/ui/ui_state_manager.gd" id="14_ui_state"]
+
+[node name="GameplayBase" type="Node2D"]
+script = ExtResource("1_w8vk8")
+
+[node name="MusicPlayer" type="Node" parent="." groups=["music_player"]]
+unique_name_in_owner = true
+script = ExtResource("6_music")
+
+[node name="MIDIEventRouter" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("7_router")
+
+[node name="NoteScheduler" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("8_scheduler")
+
+[node name="PlayerInput" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("9_input")
+
+[node name="Judge" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("10_judge")
+
+[node name="Referee" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("11_referee")
+
+[node name="NoteSpawner" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("13_spawner")
+note_scene = ExtResource("12_note")
+
+[node name="UIStateManager" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("14_ui_state")
+
+[node name="BackgroundSpawnLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="SpawnPoints" type="Node2D" parent="BackgroundSpawnLayer"]
+unique_name_in_owner = true
+
+[node name="C4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(331, 621)
+
+[node name="CSharp4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(321, 531)
+
+[node name="D4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(331, 435)
+
+[node name="DSharp4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(860, -75)
+
+[node name="E4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(952, -95)
+
+[node name="F4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(1046, -75)
+
+[node name="FSharp4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(1574, 432)
+
+[node name="G4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(1584, 520)
+
+[node name="GSharp4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(1574, 617)
+
+[node name="A4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(1055, 1152)
+
+[node name="ASharp4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(961, 1171)
+
+[node name="B4" type="Node2D" parent="BackgroundSpawnLayer/SpawnPoints"]
+position = Vector2(869, 1152)
+
+[node name="GameplayLayer" type="Node2D" parent="."]
+
+[node name="GameplayArea" type="Node2D" parent="GameplayLayer"]
+unique_name_in_owner = true
+position = Vector2(960, 540)
+
+[node name="Player" type="Sprite2D" parent="GameplayLayer/GameplayArea"]
+unique_name_in_owner = true
+texture_filter = 1
+texture = ExtResource("3_player")
+
+[node name="NoteTargets" parent="GameplayLayer/GameplayArea" instance=ExtResource("2_note_targets")]
+unique_name_in_owner = true
+
+[node name="ActiveObjects" type="Node2D" parent="GameplayLayer"]
+unique_name_in_owner = true
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="LeftUI" parent="UILayer" instance=ExtResource("4_left_panel")]
+unique_name_in_owner = true
+
+[node name="RightUI" parent="UILayer" instance=ExtResource("5_right_panel")]
+unique_name_in_owner = true
+offset_left = 1500.0
+offset_right = 1920.0

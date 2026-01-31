@@ -2,10 +2,19 @@ extends Node
 
 ## Judges player input timing against beat events.
 ## Applies latency compensation and assigns hit ratings.
+## Now direction-aware: matches input direction to beat target direction.
 
 signal judgment_made(beat: BeatEvent, offset_ms: float, rating: HitRating.Rating)
 
 @export var latency_offset_ms: float = 0.0
+
+## Maps input action names to directions
+const ACTION_TO_DIRECTION: Dictionary = {
+	"action_up": "up",
+	"action_down": "down",
+	"action_left": "left",
+	"action_right": "right"
+}
 
 var _note_scheduler: Node = null
 
@@ -14,9 +23,20 @@ func _ready() -> void:
 	if _note_scheduler == null:
 		push_error("Judge: Could not find NoteScheduler node")
 
-func judge_input(input_time_ms: float, target_beat: BeatEvent) -> void:
+func judge_input(input_time_ms: float, target_beat: BeatEvent, action_name: String = "") -> void:
 	if target_beat == null:
 		return
+	
+	# Check if direction matches (if BeatEvent has direction)
+	if not target_beat.direction.is_empty() and not action_name.is_empty():
+		var input_direction: String = ACTION_TO_DIRECTION.get(action_name, "")
+		if input_direction.is_empty():
+			push_warning("Judge: Unknown action name: %s" % action_name)
+			return
+		
+		if input_direction != target_beat.direction:
+			# Wrong direction - don't judge this beat
+			return
 	
 	# Validate time domain consistency - catch absolute timestamps masquerading as relative
 	assert(target_beat.hit_time_ms < 1000000.0, "Judge: Beat timestamp appears to be absolute system time, not song-relative")

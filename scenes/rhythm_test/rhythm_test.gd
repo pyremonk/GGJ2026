@@ -224,7 +224,7 @@ func _on_player_input(action_name: String, input_time_ms: float) -> void:
 	
 	var next_beat: BeatEvent = note_scheduler.get_next_beat()
 	if next_beat != null:
-		judge.judge_input(input_time_ms, next_beat)
+		judge.judge_input(input_time_ms, next_beat, action_name)
 
 func _on_judgment_made(beat: BeatEvent, offset_ms: float, rating: HitRating.Rating) -> void:
 	feedback_display.show_feedback(offset_ms, rating)

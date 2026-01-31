@@ -1,0 +1,129 @@
+[gd_scene load_steps=7 format=3 uid="uid://bcfmgljt3hfkr"]
+
+[ext_resource type="Script" path="res://scenes/game_scene/ui/right_panel.gd" id="1_right"]
+[ext_resource type="Texture2D" uid="uid://cwbq7m42r4050" path="res://assets/ui_labels/UI-Label_Veilshifts.png" id="2_veilshifts"]
+[ext_resource type="Texture2D" uid="uid://c6q5xvvj0blv5" path="res://assets/masks/Mask-1.png" id="3_mask1"]
+[ext_resource type="Texture2D" uid="uid://jvb1g2wgpwqc" path="res://assets/masks/Mask-2.png" id="4_mask2"]
+[ext_resource type="Texture2D" uid="uid://dsm3l8avmxs0v" path="res://assets/masks/Mask-3.png" id="5_mask3"]
+[ext_resource type="Texture2D" uid="uid://b502y7jh2vw3o" path="res://assets/masks/Mask-4.png" id="6_mask4"]
+
+[node name="RightPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 420.0
+offset_bottom = 1080.0
+script = ExtResource("1_right")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.15, 0.05, 0.1, 0.8)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="VeilshiftsHeader" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+texture = ExtResource("2_veilshifts")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MaskContainer" type="GridContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="Mask1Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("3_mask1")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Mask2Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("4_mask2")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Mask3Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("5_mask3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Mask4Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = ExtResource("6_mask4")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="NowPlayingLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "NOW PLAYING"
+horizontal_alignment = 1
+
+[node name="TrackNameLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Track Name"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ArtistLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "By: Artist"
+horizontal_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TrackProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+max_value = 100.0
+show_percentage = false
+
+[node name="TimeDisplayLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "0:00 / 0:00"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
