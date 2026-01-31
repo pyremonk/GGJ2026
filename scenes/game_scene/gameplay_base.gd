@@ -135,20 +135,6 @@ func _process(_delta: float) -> void:
 	
 	if music_player and music_player.is_playing() and right_ui:
 		right_ui.update_now_playing(music_player.get_current_time_ms())
-			# Set track info in right panel
-			if level_config:
-				right_ui.set_track_info(
-					level_config.track_name,
-					level_config.artist_name,
-					music_player.get_duration_ms()
-				)
-			else:
-				# Use fallback for test level
-				right_ui.set_track_info(
-					"Testing Track",
-					"Musician",
-					music_player.get_duration_ms()
-				)
 	
 	# Start playback
 	await get_tree().create_timer(1.0).timeout

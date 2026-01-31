@@ -49,5 +49,5 @@ func is_valid() -> bool:
 
 
 ## Returns a formatted string representation for debugging
-func to_string() -> String:
+func get_debug_string() -> String:
 	return "LevelConfig[%s] - Track: '%s' by %s" % [level_name, track_name, artist_name]

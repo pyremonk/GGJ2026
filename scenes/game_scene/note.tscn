@@ -1,7 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bkxfp2m1ohvhf"]
+[gd_scene load_steps=3 format=3 uid="uid://bkxfp2m1ohvhf"]
 
 [ext_resource type="Script" path="res://scripts/gameplay/Note.gd" id="1_m8jry"]
+[ext_resource type="Texture2D" path="res://assets/temp_enemy/Temp-Enemy.png" id="2_temp"]
 
 [node name="Note" type="Sprite2D"]
-texture = ExtResource("res://assets/temp_enemy/Temp-Enemy.png")
+texture = ExtResource("2_temp")
 script = ExtResource("1_m8jry")

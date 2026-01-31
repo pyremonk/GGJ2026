@@ -6,9 +6,9 @@ Complete implementation of the rhythm game architecture with MIDI-driven timing.
 
 1. **Open the test scene**: `scenes/rhythm_test/rhythm_test.tscn`
 2. **Default files are pre-loaded**: Testing_Track.ogg and Testing_Track.mid
-3. **Optional - Calibrate latency**: Click "Calibrate Latency" and tap spacebar 8 times on the metronome beats
+3. **Optional - Calibrate latency**: Click "Calibrate Latency" and tap S key 8 times on the metronome beats
 4. **Select beat subdivision**: Quarter Notes (default) or Eighth Notes
-5. **Press Start**: Music begins, tap spacebar to the beat
+5. **Press Start**: Music begins, tap S key (or Down arrow) to the beat
 6. **Watch feedback**: 
    - Moving bar indicator shows when to tap
    - Rating + offset shows timing accuracy (e.g., "PERFECT +5ms")
@@ -48,7 +48,7 @@ NoteScheduler schedules beats → upcoming_beat
     ↓
 BeatIndicator animates
     ↓
-PlayerInput detects spacebar → input_pressed
+PlayerInput detects S key → input_pressed
     ↓
 Judge evaluates timing → judgment_made
     ↓

@@ -264,7 +264,7 @@ func _on_beat_visual_complete() -> void:
 
 func _on_calibrate_button_pressed() -> void:
 	calibration_ui.visible = true
-	instruction_label.text = "Tap RIGHT ARROW on each beat"
+	instruction_label.text = "Tap S key on each beat"
 	progress_label.text = "Beat 0/%d" % latency_calibration.num_calibration_beats
 	result_label.text = ""
 	latency_calibration.start_calibration()

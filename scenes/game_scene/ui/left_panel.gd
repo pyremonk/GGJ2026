@@ -89,5 +89,4 @@ func reset() -> void:
 	"""Reset all values to default"""
 	current_score = 0
 	current_combo = 0
-	current_multiplier = 1.0
 	_update_displays()

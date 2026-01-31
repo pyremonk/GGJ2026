@@ -239,7 +239,8 @@ func _generate_beats_from_tempo() -> Array[BeatEvent]:
 			else:
 				next_tempo_change_ms = song_length_ms + 1.0
 		
-		var beat: BeatEvent = BeatEvent.new(current_time_ms, beat_number)
+		# Auto-generated beats default to "down" direction for rhythm test (S key)
+		var beat: BeatEvent = BeatEvent.new(current_time_ms, beat_number, -1, "down")
 		beats.append(beat)
 		
 		current_time_ms += ms_per_beat

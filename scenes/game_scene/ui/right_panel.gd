@@ -121,14 +121,6 @@ func reset_display() -> void:
 	_initialize_now_playing_display()
 
 
-func _update_displays() -> void:
-	"""Initialize all displays"""
-	veilshifts_value.text = str(veilshifts_count)
-	perfect_hits_label.text = "Perfect: " + str(perfect_hits)
-	good_hits_label.text = "Good: " + str(good_hits)
-	misses_label.text = "Misses: " + str(misses)
-
-
 func _animate_label(label: Label) -> void:
 	"""Pulse animation for value updates"""
 	var tween: Tween = create_tween()
@@ -136,12 +128,3 @@ func _animate_label(label: Label) -> void:
 	tween.set_trans(Tween.TRANS_ELASTIC)
 	tween.tween_property(label, "scale", Vector2(1.15, 1.15), 0.2)
 	tween.tween_property(label, "scale", Vector2(1.0, 1.0), 0.3)
-
-
-func reset() -> void:
-	"""Reset all values to default"""
-	veilshifts_count = 0
-	perfect_hits = 0
-	good_hits = 0
-	misses = 0
-	_update_displays()
