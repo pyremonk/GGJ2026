@@ -1,0 +1,14 @@
+[remap]
+
+importer="com.nlaha.godotmidi"
+type="MidiResource"
+uid="uid://dr2m4wli715el"
+path="res://.godot/imported/Testing_Track.mid-c6a9035963c12459099c29f6077419a5.res"
+
+[deps]
+
+source_file="res://assets/testing_track/Testing_Track.mid"
+dest_files=["res://.godot/imported/Testing_Track.mid-c6a9035963c12459099c29f6077419a5.res"]
+
+[params]
+

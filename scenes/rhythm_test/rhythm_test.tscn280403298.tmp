@@ -1,0 +1,208 @@
+[gd_scene load_steps=11 format=3 uid="uid://dhp8v50whx5xu"]
+
+[ext_resource type="Script" uid="uid://dfk420f6o5k2r" path="res://scenes/rhythm_test/rhythm_test.gd" id="1_main"]
+[ext_resource type="Script" uid="uid://cwsymq7h76gjw" path="res://scripts/audio/MusicPlayer.gd" id="2_music"]
+[ext_resource type="Script" uid="uid://j6u8t266mo75" path="res://scripts/midi/MIDIEventRouter.gd" id="3_router"]
+[ext_resource type="Script" uid="uid://b2qnj1po244t8" path="res://scripts/midi/NoteScheduler.gd" id="4_scheduler"]
+[ext_resource type="Script" uid="uid://b12v1hxilkmem" path="res://scripts/gameplay/PlayerInput.gd" id="5_input"]
+[ext_resource type="Script" uid="uid://d13j1u14xjk5c" path="res://scripts/gameplay/Judge.gd" id="6_judge"]
+[ext_resource type="Script" uid="uid://ds0r002f5aq8u" path="res://scripts/gameplay/Referee.gd" id="7_referee"]
+[ext_resource type="Script" uid="uid://cwt721ilwuhk2" path="res://scripts/audio/LatencyCalibration.gd" id="8_calibration"]
+[ext_resource type="Script" uid="uid://dp5ooe5o5o1wy" path="res://scripts/ui/BeatIndicator.gd" id="9_indicator"]
+[ext_resource type="Script" uid="uid://bo3ljb4wg8ipr" path="res://scripts/ui/FeedbackDisplay.gd" id="10_feedback"]
+
+[node name="RhythmTest" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_main")
+
+[node name="MusicPlayer" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_music")
+
+[node name="MIDIEventRouter" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("3_router")
+beat_subdivision = null
+target_track_index = null
+
+[node name="NoteScheduler" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4_scheduler")
+
+[node name="PlayerInput" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("5_input")
+
+[node name="Judge" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_judge")
+
+[node name="Referee" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("7_referee")
+
+[node name="LatencyCalibration" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("8_calibration")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="BeatIndicator" type="Control" parent="UI"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -150.0
+offset_right = 400.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("9_indicator")
+
+[node name="FeedbackDisplay" type="Label" parent="UI"]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("10_feedback")
+
+[node name="ScoreLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 200.0
+offset_bottom = 50.0
+theme_override_font_sizes/font_size = 24
+text = "Score: 0"
+
+[node name="ComboLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 200.0
+offset_bottom = 90.0
+theme_override_font_sizes/font_size = 24
+text = "Combo: 0"
+
+[node name="ConfigPanel" type="VBoxContainer" parent="UI"]
+unique_name_in_owner = true
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -220.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="AudioFileButton" type="Button" parent="UI/ConfigPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Audio: None"
+
+[node name="MIDIFileButton" type="Button" parent="UI/ConfigPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MIDI: None"
+
+[node name="SubdivisionOption" type="OptionButton" parent="UI/ConfigPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="StartButton" type="Button" parent="UI/ConfigPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Start"
+
+[node name="CalibrateButton" type="Button" parent="UI/ConfigPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Calibrate Latency"
+
+[node name="CalibrationUI" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+visible = false
+
+[node name="Panel" type="Panel" parent="CalibrationUI"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CalibrationUI/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InstructionLabel" type="Label" parent="CalibrationUI/Panel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Tap spacebar on each beat"
+horizontal_alignment = 1
+
+[node name="ProgressLabel" type="Label" parent="CalibrationUI/Panel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Beat 0/8"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ResultLabel" type="Label" parent="CalibrationUI/Panel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Offset: +0ms"
+horizontal_alignment = 1
+
+[node name="AudioFileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Open a File"
+initial_position = 2
+size = Vector2i(600, 400)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.ogg ; OGG Audio", "*.wav ; WAV Audio", "*.mp3 ; MP3 Audio")
+
+[node name="MIDIFileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Open a File"
+initial_position = 2
+size = Vector2i(600, 400)
+ok_button_text = "Open"
+file_mode = 0
+filters = PackedStringArray("*.mid ; MIDI File", "*.midi ; MIDI File")
