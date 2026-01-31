@@ -124,7 +124,11 @@ func _start_test_level() -> void:
 		# Initialize UIStateManager with total note count
 		if ui_state_manager:
 			ui_state_manager.initialize(beat_events.size(), level_config)
-			
+		
+		# Start playback after a short delay
+		await get_tree().create_timer(1.0).timeout
+		music_player.start_playback()
+		print("GameplayBase: Playback started!")
 
 
 func _process(_delta: float) -> void:
@@ -135,11 +139,6 @@ func _process(_delta: float) -> void:
 	
 	if music_player and music_player.is_playing() and right_ui:
 		right_ui.update_now_playing(music_player.get_current_time_ms())
-	
-	# Start playback
-	await get_tree().create_timer(1.0).timeout
-	music_player.start_playback()
-	print("GameplayBase: Playback started!")
 
 
 func _connect_referee_signals() -> void:
@@ -160,15 +159,15 @@ func _connect_referee_signals() -> void:
 	
 	# Connect UIStateManager to UI panels
 	if ui_state_manager:
-		ui_state_manager.resonance_updated.connect(left_ui.update_resonance
+		ui_state_manager.resonance_updated.connect(left_ui.update_resonance)
+		ui_state_manager.mask_collected.connect(right_ui.collect_mask)
+		ui_state_manager.resonance_depleted.connect(_on_resonance_depleted)
 
 
 func _connect_music_player_signals() -> void:
 	"""Connect MusicPlayer signals for track completion detection"""
 	if music_player and music_player.has_signal("playback_stopped"):
-		music_player.playback_stopped.connect(_on_track_finished))
-		ui_state_manager.mask_collected.connect(right_ui.collect_mask)
-		ui_state_manager.resonance_depleted.connect(_on_resonance_depleted)
+		music_player.playback_stopped.connect(_on_track_finished)
 
 
 func _on_score_changed(score: int) -> void:
@@ -224,7 +223,7 @@ func _on_track_finished() -> void:
 		level_won.emit(next_level_path)
 	else:
 		print("  Result: DEFEAT (too many misses)")
-		level_lost.emitudgment(rating, referee.combo, referee.score)
+		level_lost.emit()
 
 
 func _on_resonance_depleted() -> void:

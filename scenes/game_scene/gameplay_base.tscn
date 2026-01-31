@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://ds0r002f5aq8u" path="res://scripts/gameplay/Referee.gd" id="11_referee"]
 [ext_resource type="PackedScene" uid="uid://bkxfp2m1ohvhf" path="res://scenes/game_scene/note.tscn" id="12_note"]
 [ext_resource type="Script" uid="uid://uk83hyg0spa" path="res://scripts/gameplay/NoteSpawner.gd" id="13_spawner"]
-[ext_resource type="Script" path="res://scripts/ui/ui_state_manager.gd" id="14_ui_state"]
+[ext_resource type="Script" uid="uid://bx6bjwnqhxgcg" path="res://scripts/ui/ui_state_manager.gd" id="14_ui_state"]
 
 [node name="GameplayBase" type="Node2D"]
 script = ExtResource("1_w8vk8")
