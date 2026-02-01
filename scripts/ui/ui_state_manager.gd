@@ -56,8 +56,8 @@ func reset() -> void:
 
 ## Update statistics based on a judgment rating
 func update_judgment(rating: int, combo: int, score: int) -> void:
-	# HitRating.Rating enum: MISS = 0, OK = 1, GOOD = 2, PERFECT = 3
-	if rating == 0:  # MISS
+	# HitRating.Rating enum: PERFECT = 0, GREAT = 1, GOOD = 2, MISS = 3
+	if rating == HitRating.Rating.MISS:  # MISS = 3
 		misses += 1
 	else:
 		hits += 1
@@ -83,20 +83,30 @@ func collect_mask(mask_index: int) -> void:
 
 
 ## Returns the current resonance percentage (100 = full health, 0 = failure)
+## Scales from 100% at 0 misses to 0% at 25% miss threshold
 func get_resonance_percentage() -> float:
 	if total_notes == 0:
 		return 100.0
 	
+	var threshold: float = 0.25  # 25% miss threshold
+	if level_config != null:
+		threshold = level_config.miss_threshold_percentage
+	
+	# Calculate miss ratio against total level notes
 	var miss_ratio: float = float(misses) / float(total_notes)
-	return 100.0 - (miss_ratio * 100.0)
+	
+	# Scale: 0% misses = 100% resonance, threshold misses = 0% resonance
+	var resonance: float = 100.0 - ((miss_ratio / threshold) * 100.0)
+	return clampf(resonance, 0.0, 100.0)
 
 
-## Returns the accuracy percentage
+## Returns the accuracy percentage (hits out of notes played so far)
 func get_accuracy_percentage() -> float:
-	if total_notes == 0:
+	var notes_played: int = hits + misses
+	if notes_played == 0:
 		return 100.0
 	
-	return (float(hits) / float(total_notes)) * 100.0
+	return (float(hits) / float(notes_played)) * 100.0
 
 
 ## Returns true if all masks have been collected

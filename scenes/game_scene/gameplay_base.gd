@@ -195,7 +195,17 @@ func _on_player_input(action_name: String, input_time_ms: float) -> void:
 
 
 func _on_judgment_for_ui_state(beat: BeatEvent, offset_ms: float, rating: int) -> void:
-	"""Forward judgment to UIStateManager for resonance tracking"""
+	"""Forward judgment to UIStateManager for resonance tracking and show feedback"""
+	# Show feedback in left panel
+	if left_ui and left_ui.has_method("show_feedback"):
+		left_ui.show_feedback(rating)
+	
+	# Highlight note target on successful hits
+	if rating != HitRating.Rating.MISS and beat != null and not beat.direction.is_empty():
+		if note_targets and note_targets.has_method("highlight_target"):
+			note_targets.highlight_target(beat.direction)
+	
+	# Update UIStateManager for resonance tracking
 	if ui_state_manager:
 		var combo: int = 0
 		var score: int = 0

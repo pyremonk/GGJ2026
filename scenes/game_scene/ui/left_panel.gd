@@ -5,12 +5,14 @@ extends Control
 
 @onready var score_value: Label = %ScoreValue
 @onready var combo_value: Label = %ComboValue
+@onready var feedback_display: Label = %FeedbackDisplay
 @onready var resonance_bar: ProgressBar = %ResonanceBar
 @onready var resonance_stats: Label = %ResonanceStats
 @onready var resonance_accuracy: Label = %ResonanceAccuracy
 
 var current_score: int = 0
 var current_combo: int = 0
+var _feedback_tween: Tween = null
 
 @export var low_resonance_threshold: float = 33.0
 @export var medium_resonance_threshold: float = 66.0
@@ -85,8 +87,42 @@ func _animate_label(label: Label) -> void:
 	tween.tween_property(label, "scale", Vector2(1.0, 1.0), 0.3)
 
 
+func show_feedback(rating: HitRating.Rating) -> void:
+	"""Display hit rating feedback with animation"""
+	if not feedback_display:
+		return
+	
+	# Kill existing tween
+	if _feedback_tween and _feedback_tween.is_valid():
+		_feedback_tween.kill()
+	
+	# Set text and color
+	feedback_display.text = HitRating.get_rating_name(rating)
+	feedback_display.modulate = HitRating.get_rating_color(rating)
+	
+	# Animate feedback
+	_feedback_tween = create_tween()
+	_feedback_tween.set_ease(Tween.EASE_OUT)
+	_feedback_tween.set_trans(Tween.TRANS_BACK)
+	_feedback_tween.tween_property(feedback_display, "scale", Vector2(1.3, 1.3), 0.1)
+	_feedback_tween.tween_property(feedback_display, "scale", Vector2(1.0, 1.0), 0.2)
+	_feedback_tween.tween_interval(0.5)
+	_feedback_tween.tween_property(feedback_display, "modulate:a", 0.0, 0.3)
+	_feedback_tween.finished.connect(_on_feedback_animation_finished)
+
+
+func _on_feedback_animation_finished() -> void:
+	"""Reset feedback display after animation"""
+	if feedback_display:
+		feedback_display.text = ""
+		feedback_display.modulate.a = 1.0
+
+
 func reset() -> void:
 	"""Reset all values to default"""
 	current_score = 0
 	current_combo = 0
+	if feedback_display:
+		feedback_display.text = ""
+		feedback_display.modulate = Color.WHITE
 	_update_displays()

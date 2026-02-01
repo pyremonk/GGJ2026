@@ -60,6 +60,7 @@ script = ExtResource("11_referee")
 unique_name_in_owner = true
 script = ExtResource("13_spawner")
 note_scene = ExtResource("12_note")
+spawn_lookahead_ms = 3000.0
 
 [node name="UIStateManager" type="Node" parent="."]
 unique_name_in_owner = true
