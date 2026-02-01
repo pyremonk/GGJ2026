@@ -17,6 +17,22 @@ const VEILSHIFT_VELOCITIES: Dictionary = {
 	99: {"mask_id": 4, "texture_path": "res://assets/masks/Player-Mask-4.png"}
 }
 
+## MIDI note to sprite mapping (for normal notes, not veilshifts)
+const NOTE_SPRITE_MAPPING: Dictionary = {
+	60: "res://assets/notes/Note-Left.png",   # C4
+	61: "res://assets/notes/Note-Left.png",   # C#4
+	62: "res://assets/notes/Note-Left.png",   # D4
+	63: "res://assets/notes/Note-Up.png",     # D#4
+	64: "res://assets/notes/Note-Up.png",     # E4
+	65: "res://assets/notes/Note-Up.png",     # F4
+	66: "res://assets/notes/Note-Right.png",  # F#4
+	67: "res://assets/notes/Note-Right.png",  # G4
+	68: "res://assets/notes/Note-Right.png",  # G#4
+	69: "res://assets/notes/Note-Down.png",   # A4
+	70: "res://assets/notes/Note-Down.png",   # A#4
+	71: "res://assets/notes/Note-Down.png"    # B4
+}
+
 var spawn_position: Vector2 = Vector2.ZERO
 var target_position: Vector2 = Vector2.ZERO
 var arrival_time_ms: float = 0.0
@@ -53,7 +69,7 @@ func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: 
 	movement_direction = p_direction
 	velocity = p_velocity
 	
-	# Check if this is a veilshift note
+	# Check if this is a veilshift note (veilshift logic overrides sprite mapping)
 	if velocity in VEILSHIFT_VELOCITIES:
 		is_veilshift = true
 		var veilshift_data: Dictionary = VEILSHIFT_VELOCITIES[velocity]
@@ -64,6 +80,18 @@ func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: 
 			print("Note: Veilshift note (velocity=%d, mask_id=%d) loaded sprite" % [velocity, veilshift_mask_id])
 		else:
 			push_error("Note: Failed to load veilshift texture: %s" % veilshift_data["texture_path"])
+	else:
+		# Normal note - use sprite based on MIDI note value
+		if midi_note in NOTE_SPRITE_MAPPING:
+			var note_texture_path: String = NOTE_SPRITE_MAPPING[midi_note]
+			var note_texture: Texture2D = load(note_texture_path)
+			if note_texture:
+				texture = note_texture
+				print("Note: Normal note (midi=%d) loaded sprite: %s" % [midi_note, note_texture_path])
+			else:
+				push_error("Note: Failed to load note texture: %s" % note_texture_path)
+		else:
+			push_warning("Note: No sprite mapping for MIDI note %d" % midi_note)
 	
 	_travel_duration_ms = arrival_time_ms - spawn_time_ms
 	
