@@ -40,13 +40,13 @@ func _initialize_display() -> void:
 
 
 ## Update score display
-func update_score(score: int) -> void:
+func set_score(score: int) -> void:
 	if score_value_label:
 		score_value_label.text = str(score)
 
 
 ## Update combo display
-func update_combo(combo: int) -> void:
+func set_combo(combo: int) -> void:
 	if combo_value_label:
 		combo_value_label.text = str(combo)
 

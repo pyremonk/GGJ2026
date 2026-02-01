@@ -69,6 +69,11 @@ script = ExtResource("14_ui_state")
 [node name="BackgroundSpawnLayer" type="CanvasLayer" parent="."]
 layer = -1
 
+[node name="ColorRect" type="ColorRect" parent="BackgroundSpawnLayer"]
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0.9902088, 0.6789831, 0.92179674, 1)
+
 [node name="SpawnPoints" type="Node2D" parent="BackgroundSpawnLayer"]
 unique_name_in_owner = true
 

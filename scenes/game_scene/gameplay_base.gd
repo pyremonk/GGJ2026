@@ -143,7 +143,26 @@ func _start_test_level() -> void:
 		if ui_state_manager:
 			ui_state_manager.initialize(beat_events.size(), level_config)
 		
-		# Start playback after a short delay
+# Initialize Right UI with track info
+	if right_ui:
+		var track_name: String = "Track Name"
+		var artist_name: String = "Artist"
+		var duration_ms: float = 0.0
+		
+		if level_config:
+			track_name = level_config.track_name
+			artist_name = level_config.artist_name
+		
+		# Get audio duration in milliseconds
+		if audio_stream and audio_stream is AudioStreamOggVorbis:
+			duration_ms = audio_stream.get_length() * 1000.0
+		elif audio_stream:
+			# Fallback for other stream types
+			duration_ms = audio_stream.get_length() * 1000.0
+		
+		right_ui.set_track_info(track_name, artist_name, duration_ms)
+	
+	# Start playback after a short delay
 		await get_tree().create_timer(1.0).timeout
 		music_player.start_playback()
 		print("GameplayBase: Playback started!")
@@ -232,9 +251,19 @@ func _on_judgment_for_note_hit(beat: BeatEvent, offset_ms: float, rating: int) -
 
 
 func _on_beat_missed(beat: BeatEvent) -> void:
-	"""Handle missed beats - trigger visual feedback"""
+	"""Handle missed beats - trigger visual feedback and update UI state"""
 	if note_spawner:
 		note_spawner.on_note_missed(beat)
+	
+	# Update UIStateManager with miss
+	if ui_state_manager:
+		var combo: int = 0
+		var score: int = 0
+		if referee:
+			var stats: Dictionary = referee.get_statistics()
+			combo = stats.get("combo", 0)
+			score = stats.get("score", 0)
+		ui_state_manager.update_judgment(HitRating.Rating.MISS, combo, score)
 
 
 func _on_early_input_rejected(beat: BeatEvent, offset_ms: float) -> void:

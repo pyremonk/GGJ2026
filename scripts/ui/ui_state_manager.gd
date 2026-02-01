@@ -85,15 +85,16 @@ func collect_mask(mask_index: int) -> void:
 ## Returns the current resonance percentage (100 = full health, 0 = failure)
 ## Scales from 100% at 0 misses to 0% at 25% miss threshold
 func get_resonance_percentage() -> float:
-	if total_notes == 0:
+	var notes_played: int = hits + misses
+	if notes_played == 0:
 		return 100.0
 	
 	var threshold: float = 0.25  # 25% miss threshold
 	if level_config != null:
 		threshold = level_config.miss_threshold_percentage
 	
-	# Calculate miss ratio against total level notes
-	var miss_ratio: float = float(misses) / float(total_notes)
+	# Calculate miss ratio against notes played so far
+	var miss_ratio: float = float(misses) / float(notes_played)
 	
 	# Scale: 0% misses = 100% resonance, threshold misses = 0% resonance
 	var resonance: float = 100.0 - ((miss_ratio / threshold) * 100.0)
