@@ -25,6 +25,14 @@ var _has_approached_target: bool = false
 var _approach_threshold: float = 0.5  ## Trigger at 50% progress for highlight pulse
 var _is_destroyed: bool = false  ## Prevents double-processing (hit + miss, etc.)
 
+@onready var _hit_sound_player: AudioStreamPlayer = AudioStreamPlayer.new()
+
+func _ready() -> void:
+	# Set up hit sound player
+	_hit_sound_player.stream = load("res://assets/sfx/note_hit_sounds/Hit.ogg")
+	_hit_sound_player.bus = "SFX"
+	add_child(_hit_sound_player)
+
 func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: float, p_spawn_time_ms: float, p_midi_note: int, p_beat_number: int, p_direction: String) -> void:
 	spawn_position = p_spawn_pos
 	target_position = p_target_pos
@@ -94,6 +102,10 @@ func on_hit(rating: int) -> void:
 	
 	_is_destroyed = true
 	_is_traveling = false
+	
+	# Play hit sound
+	if _hit_sound_player:
+		_hit_sound_player.play()
 	
 	# Play hit effect based on rating
 	var effect_color: Color = HitRating.get_rating_color(rating)
