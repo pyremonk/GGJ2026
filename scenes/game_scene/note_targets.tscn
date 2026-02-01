@@ -1,23 +1,23 @@
 [gd_scene load_steps=3 format=3 uid="uid://btfgjp5yah2lo"]
 
 [ext_resource type="Texture2D" uid="uid://imkirbg4mrm2" path="res://assets/note_targets/Note-Target-1.png" id="1_vn77l"]
-[ext_resource type="Script" path="res://scenes/game_scene/note_targets.gd" id="1_x8kgp"]
+[ext_resource type="Script" uid="uid://ctoy5wwlcwteu" path="res://scenes/game_scene/note_targets.gd" id="1_x8kgp"]
 
 [node name="NoteTargets" type="Node2D"]
 script = ExtResource("1_x8kgp")
 
 [node name="TargetUp" type="Sprite2D" parent="."]
-position = Vector2(0, -120)
+position = Vector2(0, -78)
 texture = ExtResource("1_vn77l")
 
 [node name="TargetDown" type="Sprite2D" parent="."]
-position = Vector2(0, 120)
+position = Vector2(0, 78)
 texture = ExtResource("1_vn77l")
 
 [node name="TargetLeft" type="Sprite2D" parent="."]
-position = Vector2(-120, 0)
+position = Vector2(-78, 0)
 texture = ExtResource("1_vn77l")
 
 [node name="TargetRight" type="Sprite2D" parent="."]
-position = Vector2(120, 0)
+position = Vector2(78, 0)
 texture = ExtResource("1_vn77l")

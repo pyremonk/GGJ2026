@@ -88,6 +88,8 @@ func _setup_rhythm_system() -> void:
 	# Connect Judge judgment_made signal to Referee
 	if judge.has_signal("judgment_made"):
 		judge.judgment_made.connect(referee._on_judgment_made)
+		# Also connect to note spawner for hit effects
+		judge.judgment_made.connect(_on_judgment_for_note_hit)
 
 
 func _start_test_level() -> void:
@@ -209,6 +211,12 @@ func _on_judgment_for_ui_state(beat: BeatEvent, offset_ms: float, rating: int) -
 			combo = stats.get("combo", 0)
 			score = stats.get("score", 0)
 		ui_state_manager.update_judgment(rating, combo, score)
+
+
+func _on_judgment_for_note_hit(beat: BeatEvent, offset_ms: float, rating: int) -> void:
+	"""Forward successful hits to note spawner for visual feedback"""
+	if rating != HitRating.Rating.MISS and note_spawner:
+		note_spawner.on_note_hit(beat, rating)
 
 
 func _on_track_finished() -> void:

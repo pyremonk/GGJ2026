@@ -9,44 +9,68 @@ extends Node2D
 @onready var target_right: Sprite2D = $TargetRight
 
 const TARGET_DISTANCE: float = 120.0
-const APPROACHING_COLOR: Color = Color(1.0, 0.3, 0.3)  ## Red tint
-const NORMAL_COLOR: Color = Color(1.0, 1.0, 1.0)  ## White
+const RED_COLOR: Color = Color(1.0, 0.3, 0.3)  ## Red - notes within 75%
+const ORANGE_COLOR: Color = Color(1.0, 0.6, 0.2)  ## Orange - notes within 50%
+const NORMAL_COLOR: Color = Color(1.0, 1.0, 1.0)  ## White - no nearby notes
 
-var _approaching_count: Dictionary = {
+var _notes_at_75_percent: Dictionary = {
 	"up": 0,
 	"down": 0,
 	"left": 0,
 	"right": 0
-}  ## Track number of notes in judgment window per direction
+}  ## Track number of notes within 75% progress per direction
+
+var _notes_at_50_percent: Dictionary = {
+	"up": 0,
+	"down": 0,
+	"left": 0,
+	"right": 0
+}  ## Track number of notes within 50% progress per direction
 
 
 func _ready() -> void:
 	pass
 
 
-func set_approaching_state(direction: String, is_approaching: bool) -> void:
-	"""Set target to approaching state (red tint) when note enters judgment window"""
+func set_proximity_zone(direction: String, zone: String, entering: bool) -> void:
+	"""Update proximity zone tracking for a direction (zone: '50%' or '75%')"""
 	var target: Sprite2D = _get_target_by_direction(direction)
 	if target == null:
 		return
 	
-	# Update counter
-	if is_approaching:
-		_approaching_count[direction] += 1
-	else:
-		_approaching_count[direction] = max(0, _approaching_count[direction] - 1)
+	# Update counters
+	if zone == "75%":
+		if entering:
+			_notes_at_75_percent[direction] += 1
+		else:
+			_notes_at_75_percent[direction] = max(0, _notes_at_75_percent[direction] - 1)
+	elif zone == "50%":
+		if entering:
+			_notes_at_50_percent[direction] += 1
+		else:
+			_notes_at_50_percent[direction] = max(0, _notes_at_50_percent[direction] - 1)
 	
-	# Only change color based on whether any notes are approaching
-	var should_be_red: bool = _approaching_count[direction] > 0
+	_update_target_color(direction)
+
+
+func _update_target_color(direction: String) -> void:
+	"""Update target color based on proximity priority: red > orange > white"""
+	var target: Sprite2D = _get_target_by_direction(direction)
+	if target == null:
+		return
 	
-	if should_be_red and target.modulate != APPROACHING_COLOR:
-		# Tween to red color
+	var desired_color: Color = NORMAL_COLOR
+	
+	# Priority: red (75%) > orange (50%) > white (default)
+	if _notes_at_75_percent[direction] > 0:
+		desired_color = RED_COLOR
+	elif _notes_at_50_percent[direction] > 0:
+		desired_color = ORANGE_COLOR
+	
+	# Only tween if color actually changed
+	if target.modulate != desired_color:
 		var tween: Tween = create_tween()
-		tween.tween_property(target, "modulate", APPROACHING_COLOR, 0.1)
-	elif not should_be_red and target.modulate != NORMAL_COLOR:
-		# Tween back to normal
-		var tween: Tween = create_tween()
-		tween.tween_property(target, "modulate", NORMAL_COLOR, 0.2)
+		tween.tween_property(target, "modulate", desired_color, 0.1)
 
 
 func highlight_target(direction: String) -> void:

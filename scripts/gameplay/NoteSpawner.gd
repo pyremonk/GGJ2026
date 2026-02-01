@@ -64,6 +64,7 @@ const TARGET_MAPPING: Dictionary = {
 }
 
 var _active_notes: Array[Note] = []
+var _beat_to_note_map: Dictionary = {}  ## Maps BeatEvent to Note for hit detection
 
 func _ready() -> void:
 	pass  # Signal connection handled by gameplay_base
@@ -131,11 +132,13 @@ func spawn_note(beat: BeatEvent) -> void:
 	)
 	
 	# Connect note signals
-	note.arrived_at_target.connect(_on_note_arrived_at_target)
-	note.entering_judgment_window.connect(_on_note_entering_judgment_window)
+	note.entered_50_percent_zone.connect(_on_note_entered_50_percent_zone)
+	note.entered_75_percent_zone.connect(_on_note_entered_75_percent_zone)
 	note.approaching_target.connect(_on_note_approaching_target)
+	note.arrived_at_target.connect(_on_note_arrived_at_target)
 	
 	_active_notes.append(note)
+	_beat_to_note_map[beat] = note  # Map beat to note for hit detection
 	note_spawned.emit(note)
 	
 	print("NoteSpawner: Spawned note %d (%s) at (%.0f, %.0f) -> (%.0f, %.0f), arrival in %.0fms" % [
@@ -146,22 +149,30 @@ func spawn_note(beat: BeatEvent) -> void:
 		arrival_time_ms - spawn_time_ms
 	])
 
+func _on_note_entered_50_percent_zone(note: Note) -> void:
+	# Note entered 50% proximity zone
+	if note_targets and note_targets.has_method("set_proximity_zone"):
+		note_targets.set_proximity_zone(note.movement_direction, "50%", true)
+
+
+func _on_note_entered_75_percent_zone(note: Note) -> void:
+	# Note entered 75% proximity zone (closer to target)
+	if note_targets and note_targets.has_method("set_proximity_zone"):
+		note_targets.set_proximity_zone(note.movement_direction, "75%", true)
+
+
 func _on_note_approaching_target(note: Note) -> void:
 	# Note is getting close - highlight target with scale pulse
 	if note_targets and note_targets.has_method("highlight_target"):
 		note_targets.highlight_target(note.movement_direction)
 
 
-func _on_note_entering_judgment_window(note: Note) -> void:
-	# Note is approaching target - set target to red tint
-	if note_targets and note_targets.has_method("set_approaching_state"):
-		note_targets.set_approaching_state(note.movement_direction, true)
-
 func _on_note_arrived_at_target(note: Note) -> void:
 	# Note has reached its target position
-	# Clear approaching state
-	if note_targets and note_targets.has_method("set_approaching_state"):
-		note_targets.set_approaching_state(note.movement_direction, false)
+	# Clear both proximity zones for this note
+	if note_targets and note_targets.has_method("set_proximity_zone"):
+		note_targets.set_proximity_zone(note.movement_direction, "75%", false)
+		note_targets.set_proximity_zone(note.movement_direction, "50%", false)
 	
 	# The Judge should handle timing judgment
 	# For now, just mark as arrived (miss handling will be added later)
@@ -172,10 +183,35 @@ func _on_note_arrived_at_target(note: Note) -> void:
 	
 	if note and is_instance_valid(note):
 		_active_notes.erase(note)
+		# Remove from beat map
+		for beat in _beat_to_note_map.keys():
+			if _beat_to_note_map[beat] == note:
+				_beat_to_note_map.erase(beat)
+				break
 		note.destroy()
+
+
+func on_note_hit(beat: BeatEvent, rating: int) -> void:
+	"""Called when a note is successfully hit by the player"""
+	var note: Note = _beat_to_note_map.get(beat, null)
+	if note == null or not is_instance_valid(note):
+		return
+	
+	# Clear proximity zones immediately
+	if note_targets and note_targets.has_method("set_proximity_zone"):
+		note_targets.set_proximity_zone(note.movement_direction, "75%", false)
+		note_targets.set_proximity_zone(note.movement_direction, "50%", false)
+	
+	# Trigger hit effect on note
+	note.on_hit(rating)
+	
+	# Remove from tracking
+	_active_notes.erase(note)
+	_beat_to_note_map.erase(beat)
 
 func clear_all_notes() -> void:
 	for note in _active_notes:
 		if is_instance_valid(note):
 			note.destroy()
 	_active_notes.clear()
+	_beat_to_note_map.clear()

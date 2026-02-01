@@ -5,8 +5,9 @@ extends Sprite2D
 ## Moves linearly from spawn point to target, arriving exactly at the specified time.
 
 signal arrived_at_target(note: Note)
-signal entering_judgment_window(note: Note)
-signal approaching_target(note: Note)
+signal entered_50_percent_zone(note: Note)
+signal entered_75_percent_zone(note: Note)
+signal approaching_target(note: Note)  ## For highlight pulse animation
 
 var spawn_position: Vector2 = Vector2.ZERO
 var target_position: Vector2 = Vector2.ZERO
@@ -18,10 +19,10 @@ var beat_number: int = 0
 
 var _is_traveling: bool = false
 var _travel_duration_ms: float = 0.0
-var _has_entered_judgment_window: bool = false
+var _has_entered_50_percent: bool = false
+var _has_entered_75_percent: bool = false
 var _has_approached_target: bool = false
-var _judgment_window_threshold: float = 0.3  ## Trigger at 30% of travel remaining
-var _approach_threshold: float = 0.5  ## Trigger at 50% of travel remaining
+var _approach_threshold: float = 0.5  ## Trigger at 50% progress for highlight pulse
 
 func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: float, p_spawn_time_ms: float, p_midi_note: int, p_beat_number: int, p_direction: String) -> void:
 	spawn_position = p_spawn_pos
@@ -59,15 +60,20 @@ func _process(_delta: float) -> void:
 	var elapsed_ms: float = current_time_ms - spawn_time_ms
 	var progress: float = elapsed_ms / _travel_duration_ms if _travel_duration_ms > 0.0 else 1.0
 	
-	# Trigger approaching target at 50% progress
-	if not _has_approached_target and progress >= (1.0 - _approach_threshold):
+	# Trigger at 50% progress (halfway to target)
+	if not _has_entered_50_percent and progress >= 0.5:
+		_has_entered_50_percent = true
+		entered_50_percent_zone.emit(self)
+	
+	# Trigger approaching target at 50% progress for highlight pulse
+	if not _has_approached_target and progress >= 0.5:
 		_has_approached_target = true
 		approaching_target.emit(self)
 	
-	# Trigger judgment window entering at threshold
-	if not _has_entered_judgment_window and progress >= (1.0 - _judgment_window_threshold):
-		_has_entered_judgment_window = true
-		entering_judgment_window.emit(self)
+	# Trigger at 75% progress (last quarter of travel)
+	if not _has_entered_75_percent and progress >= 0.75:
+		_has_entered_75_percent = true
+		entered_75_percent_zone.emit(self)
 	
 	if progress >= 1.0:
 		# Reached or passed target
@@ -78,6 +84,32 @@ func _process(_delta: float) -> void:
 	
 	# Linear interpolation from spawn to target
 	position = spawn_position.lerp(target_position, progress)
+
+
+func on_hit(rating: int) -> void:
+	"""Called when note is successfully hit - stop movement and play hit effect"""
+	if not _is_traveling:
+		return  # Already hit or arrived
+	
+	_is_traveling = false
+	
+	# Play hit effect based on rating
+	var effect_color: Color = HitRating.get_rating_color(rating)
+	
+	# Create hit animation - color change and scale, then fade out
+	var tween: Tween = create_tween()
+	tween.set_parallel(true)
+	
+	# Scale up and change to rating color (with full alpha)
+	tween.tween_property(self, "scale", Vector2(1.5, 1.5), 0.15)
+	tween.tween_property(self, "modulate", effect_color, 0.15)
+	
+	# Then fade out while keeping the color
+	tween.chain().tween_property(self, "modulate:a", 0.0, 0.15)
+	
+	# Destroy after animation
+	tween.chain().tween_callback(destroy)
+
 
 func destroy() -> void:
 	queue_free()
