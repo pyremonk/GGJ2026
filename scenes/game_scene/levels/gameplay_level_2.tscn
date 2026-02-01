@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bwcx7n2y5pmqr"]
+
+[ext_resource type="Script" uid="uid://qi4qdfy4cte8" path="res://scenes/game_scene/levels/level.gd" id="1_level"]
+[ext_resource type="PackedScene" uid="uid://i7qyfwoyxj74" path="res://scenes/game_scene/gameplay_base.tscn" id="2_gameplay"]
+
+[node name="GameplayLevel2" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_level")
+next_level_path = "res://scenes/game_scene/levels/gameplay_level_3.tscn"
+
+[node name="GameplayBase" parent="." instance=ExtResource("2_gameplay")]
+unique_name_in_owner = true

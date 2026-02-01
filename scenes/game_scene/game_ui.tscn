@@ -33,19 +33,13 @@ script = ExtResource("4_ascoc")
 level_container = NodePath("../ViewportContainer/ConfigurableSubViewport")
 level_loading_screen = NodePath("../LevelLoadingScreen")
 
-[node name="LevelManager" type="Node" parent="." node_paths=PackedStringArray("level_loader", "scene_lister")]
+[node name="LevelManager" type="Node" parent="." node_paths=PackedStringArray("level_loader")]
 script = ExtResource("5_wr4n6")
 level_loader = NodePath("../LevelLoader")
-starting_level_path = "res://scenes/game_scene/levels/level_1.tscn"
-scene_lister = NodePath("SceneLister")
+starting_level_path = "res://scenes/game_scene/levels/gameplay_level_1.tscn"
 game_won_scene = ExtResource("6_ukb12")
 level_lost_scene = ExtResource("7_i7m4m")
 level_won_scene = ExtResource("8_rkfhe")
-
-[node name="SceneLister" type="Node" parent="LevelManager"]
-script = ExtResource("9_g2ndc")
-files = Array[String](["res://scenes/game_scene/levels/level_1.tscn", "res://scenes/game_scene/levels/level_2.tscn", "res://scenes/game_scene/levels/level_3.tscn"])
-directory = "res://scenes/game_scene/levels"
 
 [node name="LevelLoadingScreen" parent="." instance=ExtResource("10_0v86b")]
 visible = false

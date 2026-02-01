@@ -125,23 +125,38 @@ func _on_player_input_for_effects(action_name: String, input_time_ms: float) -> 
 
 
 func _start_test_level() -> void:
-	"""Load and start test MIDI/audio for development"""
-	if test_midi_file.is_empty() or test_audio_file.is_empty():
-		push_warning("Test files not set. Assign test_midi_file and test_audio_file to play.")
+	"""Load and start MIDI/audio from level_config or test files"""
+	var midi_file: String = ""
+	var audio_file: String = ""
+	
+	# Prioritize level_config over test files
+	if level_config != null:
+		midi_file = level_config.midi_file_path
+		audio_file = level_config.audio_file_path
+		print("GameplayBase: Loading from level_config...")
+		print("  Level: ", level_config.level_name)
+		print("  Track: ", level_config.track_name)
+		print("  Artist: ", level_config.artist_name)
+	else:
+		midi_file = test_midi_file
+		audio_file = test_audio_file
+		print("GameplayBase: Loading test level...")
+	
+	if midi_file.is_empty() or audio_file.is_empty():
+		push_warning("No MIDI/audio files configured. Set level_config or test files.")
 		return
 	
-	print("GameplayBase: Loading test level...")
-	print("  MIDI: ", test_midi_file)
-	print("  Audio: ", test_audio_file)
+	print("  MIDI: ", midi_file)
+	print("  Audio: ", audio_file)
 	
 	# Load audio stream
-	var audio_stream: AudioStream = load(test_audio_file)
+	var audio_stream: AudioStream = load(audio_file)
 	if audio_stream == null:
-		push_error("Failed to load audio: " + test_audio_file)
+		push_error("Failed to load audio: " + audio_file)
 		return
 	
 	# Load files
-	var success: bool = music_player.load_files(audio_stream, test_midi_file)
+	var success: bool = music_player.load_files(audio_stream, midi_file)
 	if not success:
 		push_error("Failed to load MIDI/audio files")
 		return

@@ -37,7 +37,11 @@ theme_override_constants/margin_bottom = 20
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="ScoreLabel" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 50
+
+[node name="ScoreLabel" type="TextureRect" parent="MarginContainer/VBoxContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 texture = ExtResource("2_jvsom")
@@ -51,10 +55,11 @@ theme_override_font_sizes/font_size = 48
 text = "0"
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/margin_top = 50
 
-[node name="ComboLabel" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+[node name="ComboLabel" type="TextureRect" parent="MarginContainer/VBoxContainer/MarginContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 texture = ExtResource("3_5eubx")
@@ -68,25 +73,31 @@ theme_override_font_sizes/font_size = 42
 text = "0x"
 horizontal_alignment = 1
 
-[node name="HSeparator2" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer3" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/margin_top = 50
 
-[node name="FeedbackDisplay" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="FeedbackDisplay" type="Label" parent="MarginContainer/VBoxContainer/MarginContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 36
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HSeparator3" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer4" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/margin_top = 50
 
-[node name="ResonanceLabel" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+[node name="ResonanceLabel" type="TextureRect" parent="MarginContainer/VBoxContainer/MarginContainer4"]
 layout_mode = 2
 texture = ExtResource("4_ojm1v")
 stretch_mode = 3
 
-[node name="ResonanceBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+[node name="MarginContainer5" type="MarginContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 25
+
+[node name="ResonanceBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/MarginContainer5"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2

@@ -22,8 +22,8 @@ script = ExtResource("2_fd6kl")
 level_name = "Espionage on the Dance Floor"
 track_name = "Espionage on the Dance Floor"
 artist_name = "pyremonk"
-midi_file_path = "uid://dr2m4wli715el"
-audio_file_path = "uid://b1h3mivv1u1qf"
+midi_file_path = "uid://drg7k0r54o0x7"
+audio_file_path = "uid://cyaqn5cfo7cey"
 metadata/_custom_type_script = "uid://bv3gmwsjx0bbb"
 
 [node name="GameplayBase" type="Node2D"]
@@ -45,6 +45,7 @@ script = ExtResource("7_router")
 [node name="NoteScheduler" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("8_scheduler")
+lookahead_ms = 2667.0
 
 [node name="PlayerInput" type="Node" parent="."]
 unique_name_in_owner = true
