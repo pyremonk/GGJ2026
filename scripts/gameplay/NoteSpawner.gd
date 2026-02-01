@@ -133,6 +133,7 @@ func spawn_note(beat: BeatEvent) -> void:
 	# Connect note signals
 	note.arrived_at_target.connect(_on_note_arrived_at_target)
 	note.entering_judgment_window.connect(_on_note_entering_judgment_window)
+	note.approaching_target.connect(_on_note_approaching_target)
 	
 	_active_notes.append(note)
 	note_spawned.emit(note)
@@ -144,6 +145,12 @@ func spawn_note(beat: BeatEvent) -> void:
 		target_pos.x, target_pos.y,
 		arrival_time_ms - spawn_time_ms
 	])
+
+func _on_note_approaching_target(note: Note) -> void:
+	# Note is getting close - highlight target with scale pulse
+	if note_targets and note_targets.has_method("highlight_target"):
+		note_targets.highlight_target(note.movement_direction)
+
 
 func _on_note_entering_judgment_window(note: Note) -> void:
 	# Note is approaching target - set target to red tint

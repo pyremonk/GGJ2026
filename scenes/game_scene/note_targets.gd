@@ -12,7 +12,12 @@ const TARGET_DISTANCE: float = 120.0
 const APPROACHING_COLOR: Color = Color(1.0, 0.3, 0.3)  ## Red tint
 const NORMAL_COLOR: Color = Color(1.0, 1.0, 1.0)  ## White
 
-var _approaching_targets: Dictionary = {}  ## Track which targets are in approaching state
+var _approaching_count: Dictionary = {
+	"up": 0,
+	"down": 0,
+	"left": 0,
+	"right": 0
+}  ## Track number of notes in judgment window per direction
 
 
 func _ready() -> void:
@@ -25,13 +30,20 @@ func set_approaching_state(direction: String, is_approaching: bool) -> void:
 	if target == null:
 		return
 	
-	_approaching_targets[direction] = is_approaching
-	
+	# Update counter
 	if is_approaching:
+		_approaching_count[direction] += 1
+	else:
+		_approaching_count[direction] = max(0, _approaching_count[direction] - 1)
+	
+	# Only change color based on whether any notes are approaching
+	var should_be_red: bool = _approaching_count[direction] > 0
+	
+	if should_be_red and target.modulate != APPROACHING_COLOR:
 		# Tween to red color
 		var tween: Tween = create_tween()
 		tween.tween_property(target, "modulate", APPROACHING_COLOR, 0.1)
-	else:
+	elif not should_be_red and target.modulate != NORMAL_COLOR:
 		# Tween back to normal
 		var tween: Tween = create_tween()
 		tween.tween_property(target, "modulate", NORMAL_COLOR, 0.2)

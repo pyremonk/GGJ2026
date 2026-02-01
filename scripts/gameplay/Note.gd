@@ -6,6 +6,7 @@ extends Sprite2D
 
 signal arrived_at_target(note: Note)
 signal entering_judgment_window(note: Note)
+signal approaching_target(note: Note)
 
 var spawn_position: Vector2 = Vector2.ZERO
 var target_position: Vector2 = Vector2.ZERO
@@ -18,7 +19,9 @@ var beat_number: int = 0
 var _is_traveling: bool = false
 var _travel_duration_ms: float = 0.0
 var _has_entered_judgment_window: bool = false
+var _has_approached_target: bool = false
 var _judgment_window_threshold: float = 0.3  ## Trigger at 30% of travel remaining
+var _approach_threshold: float = 0.5  ## Trigger at 50% of travel remaining
 
 func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: float, p_spawn_time_ms: float, p_midi_note: int, p_beat_number: int, p_direction: String) -> void:
 	spawn_position = p_spawn_pos
@@ -55,6 +58,11 @@ func _process(_delta: float) -> void:
 	# Calculate progress (0.0 to 1.0+)
 	var elapsed_ms: float = current_time_ms - spawn_time_ms
 	var progress: float = elapsed_ms / _travel_duration_ms if _travel_duration_ms > 0.0 else 1.0
+	
+	# Trigger approaching target at 50% progress
+	if not _has_approached_target and progress >= (1.0 - _approach_threshold):
+		_has_approached_target = true
+		approaching_target.emit(self)
 	
 	# Trigger judgment window entering at threshold
 	if not _has_entered_judgment_window and progress >= (1.0 - _judgment_window_threshold):
