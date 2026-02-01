@@ -96,16 +96,79 @@ func on_hit(rating: int) -> void:
 	# Play hit effect based on rating
 	var effect_color: Color = HitRating.get_rating_color(rating)
 	
-	# Create hit animation - color change and scale, then fade out
+	# Create hit animation - quick color change, scale, then fade out
+	var tween: Tween = create_tween()
+	
+	# Instantly change to rating color and scale up (0.05s)
+	tween.set_parallel(true)
+	tween.tween_property(self, "self_modulate", effect_color, 0.05)
+	tween.tween_property(self, "scale", Vector2(1.5, 1.5), 0.05)
+	
+	# Hold for a moment (0.15s)
+	tween.chain().tween_interval(0.15)
+	
+	# Then fade out while keeping the color (0.15s)
+	tween.tween_property(self, "modulate:a", 0.0, 0.15)
+	
+	# Destroy after animation
+	tween.chain().tween_callback(destroy)
+
+
+func on_missed() -> void:
+	"""Called when note reaches target without being hit - rush at player"""
+	if not _is_traveling:
+		return  # Already processed
+	
+	_is_traveling = false
+	
+	# Get player position (center of gameplay area)
+	var player_pos: Vector2 = Vector2(960, 540)
+	var gameplay_area: Node2D = get_tree().get_first_node_in_group("gameplay_area")
+	if gameplay_area:
+		player_pos = gameplay_area.global_position
+	
+	# Turn red and rush at player while shrinking
 	var tween: Tween = create_tween()
 	tween.set_parallel(true)
 	
-	# Scale up and change to rating color (with full alpha)
-	tween.tween_property(self, "scale", Vector2(1.5, 1.5), 0.15)
-	tween.tween_property(self, "modulate", effect_color, 0.15)
+	# Change to red immediately
+	tween.tween_property(self, "self_modulate", Color.RED, 0.05)
 	
-	# Then fade out while keeping the color
-	tween.chain().tween_property(self, "modulate:a", 0.0, 0.15)
+	# Rush to player position
+	tween.tween_property(self, "global_position", player_pos, 0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	
+	# Shrink while moving
+	tween.tween_property(self, "scale", Vector2.ZERO, 0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	
+	# Destroy after animation
+	tween.chain().tween_callback(destroy)
+
+
+func on_early_hit() -> void:
+	"""Called when player hits too early - rush at player and shrink"""
+	if not _is_traveling:
+		return  # Already processed
+	
+	_is_traveling = false
+	
+	# Get player position (center of gameplay area)
+	var player_pos: Vector2 = Vector2(960, 540)
+	var gameplay_area: Node2D = get_tree().get_first_node_in_group("gameplay_area")
+	if gameplay_area:
+		player_pos = gameplay_area.global_position
+	
+	# Turn red and rush at player while shrinking
+	var tween: Tween = create_tween()
+	tween.set_parallel(true)
+	
+	# Change to red immediately
+	tween.tween_property(self, "self_modulate", Color.RED, 0.05)
+	
+	# Rush to player position
+	tween.tween_property(self, "global_position", player_pos, 0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	
+	# Shrink while moving
+	tween.tween_property(self, "scale", Vector2.ZERO, 0.3).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	
 	# Destroy after animation
 	tween.chain().tween_callback(destroy)

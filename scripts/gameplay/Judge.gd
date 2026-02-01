@@ -5,6 +5,7 @@ extends Node
 ## Now direction-aware: matches input direction to beat target direction.
 
 signal judgment_made(beat: BeatEvent, offset_ms: float, rating: HitRating.Rating)
+signal early_input_rejected(beat: BeatEvent, offset_ms: float)
 
 @export var latency_offset_ms: float = 0.0
 
@@ -45,6 +46,12 @@ func judge_input(input_time_ms: float, target_beat: BeatEvent, action_name: Stri
 	var adjusted_input_time: float = input_time_ms + latency_offset_ms
 	var offset_ms: float = adjusted_input_time - target_beat.hit_time_ms
 	var rating: HitRating.Rating = HitRating.get_rating_from_offset(offset_ms)
+	
+	# Check if input was too early (before good window)
+	if offset_ms < -HitRating.GOOD_WINDOW_MS:
+		# Input was way too early - trigger early input rejection
+		early_input_rejected.emit(target_beat, offset_ms)
+		return
 	
 	if rating != HitRating.Rating.MISS:
 		target_beat.was_hit = true

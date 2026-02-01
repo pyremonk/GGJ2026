@@ -65,6 +65,7 @@ const TARGET_MAPPING: Dictionary = {
 
 var _active_notes: Array[Note] = []
 var _beat_to_note_map: Dictionary = {}  ## Maps BeatEvent to Note for hit detection
+var _failed_notes: Array[Note] = []  ## Notes that were hit too early and can't be hit again
 
 func _ready() -> void:
 	pass  # Signal connection handled by gameplay_base
@@ -197,6 +198,10 @@ func on_note_hit(beat: BeatEvent, rating: int) -> void:
 	if note == null or not is_instance_valid(note):
 		return
 	
+	# Check if note was already marked as failed
+	if note in _failed_notes:
+		return
+	
 	# Clear proximity zones immediately
 	if note_targets and note_targets.has_method("set_proximity_zone"):
 		note_targets.set_proximity_zone(note.movement_direction, "75%", false)
@@ -209,9 +214,52 @@ func on_note_hit(beat: BeatEvent, rating: int) -> void:
 	_active_notes.erase(note)
 	_beat_to_note_map.erase(beat)
 
+
+func on_note_missed(beat: BeatEvent) -> void:
+	"""Called when a note is missed (reached target without being hit)"""
+	var note: Note = _beat_to_note_map.get(beat, null)
+	if note == null or not is_instance_valid(note):
+		return
+	
+	# Clear proximity zones
+	if note_targets and note_targets.has_method("set_proximity_zone"):
+		note_targets.set_proximity_zone(note.movement_direction, "75%", false)
+		note_targets.set_proximity_zone(note.movement_direction, "50%", false)
+	
+	# Trigger miss effect on note
+	note.on_missed()
+	
+	# Remove from tracking
+	_active_notes.erase(note)
+	_beat_to_note_map.erase(beat)
+
+
+func on_early_input(beat: BeatEvent) -> void:
+	"""Called when player inputs too early for a note"""
+	var note: Note = _beat_to_note_map.get(beat, null)
+	if note == null or not is_instance_valid(note):
+		return
+	
+	# Mark as failed so it can't be hit again
+	_failed_notes.append(note)
+	
+	# Clear proximity zones
+	if note_targets and note_targets.has_method("set_proximity_zone"):
+		note_targets.set_proximity_zone(note.movement_direction, "75%", false)
+		note_targets.set_proximity_zone(note.movement_direction, "50%", false)
+	
+	# Trigger early hit effect
+	note.on_early_hit()
+	
+	# Remove from tracking
+	_active_notes.erase(note)
+	_failed_notes.erase(note)  # Will be destroyed, remove from failed list
+	_beat_to_note_map.erase(beat)
+
 func clear_all_notes() -> void:
 	for note in _active_notes:
 		if is_instance_valid(note):
 			note.destroy()
 	_active_notes.clear()
 	_beat_to_note_map.clear()
+	_failed_notes.clear()

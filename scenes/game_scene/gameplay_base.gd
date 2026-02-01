@@ -48,6 +48,10 @@ func _ready() -> void:
 	_connect_referee_signals()
 	_connect_music_player_signals()
 	
+	# Add gameplay_area to group for note early-hit effect
+	if gameplay_area:
+		gameplay_area.add_to_group("gameplay_area")
+	
 	# Auto-start for testing
 	call_deferred("_start_test_level")
 
@@ -90,6 +94,14 @@ func _setup_rhythm_system() -> void:
 		judge.judgment_made.connect(referee._on_judgment_made)
 		# Also connect to note spawner for hit effects
 		judge.judgment_made.connect(_on_judgment_for_note_hit)
+	
+	# Connect early input rejection signal
+	if judge.has_signal("early_input_rejected"):
+		judge.early_input_rejected.connect(_on_early_input_rejected)
+	
+	# Connect NoteScheduler beat_missed signal
+	if note_scheduler.has_signal("beat_missed"):
+		note_scheduler.beat_missed.connect(_on_beat_missed)
 
 
 func _start_test_level() -> void:
@@ -217,6 +229,18 @@ func _on_judgment_for_note_hit(beat: BeatEvent, offset_ms: float, rating: int) -
 	"""Forward successful hits to note spawner for visual feedback"""
 	if rating != HitRating.Rating.MISS and note_spawner:
 		note_spawner.on_note_hit(beat, rating)
+
+
+func _on_beat_missed(beat: BeatEvent) -> void:
+	"""Handle missed beats - trigger visual feedback"""
+	if note_spawner:
+		note_spawner.on_note_missed(beat)
+
+
+func _on_early_input_rejected(beat: BeatEvent, offset_ms: float) -> void:
+	"""Handle early input - trigger penalty visual"""
+	if note_spawner:
+		note_spawner.on_early_input(beat)
 
 
 func _on_track_finished() -> void:

@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://bahffr0vbydb8"]
+[gd_scene load_steps=6 format=3 uid="uid://bahffr0vbydb8"]
 
 [ext_resource type="Script" uid="uid://ofjlvm5aoh7s" path="res://scenes/game_scene/ui/left_panel.gd" id="1_left"]
+[ext_resource type="Texture2D" uid="uid://im3yc5ho4vmf" path="res://assets/ui_labels/UI-Label_Score.png" id="2_jvsom"]
 [ext_resource type="Texture2D" uid="uid://7etggxvg32if" path="res://assets/ui_labels/UI-Label_Night-at-the-Masquerade.png" id="2_title"]
+[ext_resource type="Texture2D" uid="uid://bedd4h6e2q2hk" path="res://assets/ui_labels/UI-Label_Combo.png" id="3_5eubx"]
+[ext_resource type="Texture2D" uid="uid://fj7yfsgk8wlu" path="res://assets/ui_labels/UI-Label_Resonance.png" id="4_ojm1v"]
 
 [node name="LeftPanel" type="Control"]
 layout_mode = 3
@@ -17,7 +20,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.101960786, 0.050980393, 0.14901961, 1)
+color = Color(0.49189192, 0.3314105, 0.64419, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -27,23 +30,23 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 20
+theme_override_constants/margin_top = 60
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="ScoreLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="ScoreLabel" type="TextureRect" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 32
-text = "SCORE"
-horizontal_alignment = 1
+texture = ExtResource("2_jvsom")
+stretch_mode = 5
 
 [node name="ScoreValue" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 48
 text = "0"
 horizontal_alignment = 1
@@ -51,16 +54,16 @@ horizontal_alignment = 1
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="ComboLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="ComboLabel" type="TextureRect" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "COMBO"
-horizontal_alignment = 1
+texture = ExtResource("3_5eubx")
+stretch_mode = 3
 
 [node name="ComboValue" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 42
 text = "0x"
 horizontal_alignment = 1
@@ -78,11 +81,10 @@ vertical_alignment = 1
 [node name="HSeparator3" type="HSeparator" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="ResonanceLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="ResonanceLabel" type="TextureRect" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "RESONANCE"
-horizontal_alignment = 1
+texture = ExtResource("4_ojm1v")
+stretch_mode = 3
 
 [node name="ResonanceBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -94,6 +96,7 @@ show_percentage = false
 [node name="ResonanceStats" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 20
 text = "0 / 0"
 horizontal_alignment = 1
@@ -101,6 +104,7 @@ horizontal_alignment = 1
 [node name="ResonanceAccuracy" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 24
 text = "100%"
 horizontal_alignment = 1
@@ -113,5 +117,4 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_vertical = 8
 texture = ExtResource("2_title")
-expand_mode = 1
 stretch_mode = 5
