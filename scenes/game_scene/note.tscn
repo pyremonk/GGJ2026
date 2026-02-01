@@ -1,8 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://bkxfp2m1ohvhf"]
 
-[ext_resource type="Script" path="res://scripts/gameplay/Note.gd" id="1_m8jry"]
-[ext_resource type="Texture2D" path="res://assets/temp_enemy/Temp-Enemy.png" id="2_temp"]
+[ext_resource type="Script" uid="uid://cugpwu0np5vcj" path="res://scripts/gameplay/Note.gd" id="1_m8jry"]
+[ext_resource type="Texture2D" uid="uid://cfnhg58yiqn6h" path="res://assets/temp_enemy/Temp-Enemy.png" id="2_temp"]
 
 [node name="Note" type="Sprite2D"]
+texture_filter = 1
 texture = ExtResource("2_temp")
 script = ExtResource("1_m8jry")

@@ -74,6 +74,10 @@ func _setup_rhythm_system() -> void:
 	note_spawner.note_scheduler = note_scheduler
 	note_spawner.music_player = music_player
 	
+	# Connect NoteScheduler to NoteSpawner
+	if note_scheduler.has_signal("upcoming_beat"):
+		note_scheduler.upcoming_beat.connect(note_spawner._on_upcoming_beat)
+	
 	# Connect PlayerInput to MusicPlayer for timing
 	player_input.set_music_player(music_player)
 	
@@ -192,8 +196,14 @@ func _on_player_input(action_name: String, input_time_ms: float) -> void:
 
 func _on_judgment_for_ui_state(beat: BeatEvent, offset_ms: float, rating: int) -> void:
 	"""Forward judgment to UIStateManager for resonance tracking"""
-	music_player.stop_playback()
-	level_lost.emit()
+	if ui_state_manager:
+		var combo: int = 0
+		var score: int = 0
+		if referee:
+			var stats: Dictionary = referee.get_statistics()
+			combo = stats.get("combo", 0)
+			score = stats.get("score", 0)
+		ui_state_manager.update_judgment(rating, combo, score)
 
 
 func _on_track_finished() -> void:

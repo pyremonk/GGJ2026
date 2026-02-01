@@ -66,8 +66,7 @@ const TARGET_MAPPING: Dictionary = {
 var _active_notes: Array[Note] = []
 
 func _ready() -> void:
-	if note_scheduler:
-		note_scheduler.upcoming_beat.connect(_on_upcoming_beat)
+	pass  # Signal connection handled by gameplay_base
 
 func _on_upcoming_beat(beat: BeatEvent) -> void:
 	# Only spawn visual notes for beats with MIDI note data

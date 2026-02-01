@@ -33,6 +33,13 @@ func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: 
 	
 	position = spawn_position
 	_is_traveling = true
+	
+	print("Note: Initialized note %d at (%.0f, %.0f), traveling to (%.0f, %.0f) over %.0fms" % [
+		p_midi_note,
+		spawn_position.x, spawn_position.y,
+		target_position.x, target_position.y,
+		_travel_duration_ms
+	])
 
 func _process(_delta: float) -> void:
 	if not _is_traveling:
