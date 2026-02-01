@@ -42,7 +42,7 @@ const FLYING_BEAT_INDICATOR_SCRIPT: String = "res://scripts/ui/FlyingBeatIndicat
 @onready var midi_file_dialog: FileDialog = %MIDIFileDialog
 
 var _audio_stream: AudioStream = null
-var _midi_file_path: String = ""
+var _midi_resource: Resource = null
 var _is_playing: bool = false
 var _total_beats_rendered: int = 0
 var _total_beats_in_song: int = 0
@@ -106,13 +106,14 @@ func _load_default_files() -> void:
 		audio_file_button.text = "Audio: Testing_Track.ogg"
 	
 	if FileAccess.file_exists(default_midi_path):
-		_midi_file_path = default_midi_path
-		midi_file_button.text = "MIDI: Testing_Track.mid"
+		_midi_resource = load(default_midi_path)
+		if _midi_resource:
+			midi_file_button.text = "MIDI: Testing_Track.mid"
 	
 	_check_files_ready()
 
 func _check_files_ready() -> void:
-	start_button.disabled = (_audio_stream == null or _midi_file_path.is_empty())
+	start_button.disabled = (_audio_stream == null or _midi_resource == null)
 
 func _on_audio_file_button_pressed() -> void:
 	audio_file_dialog.popup_centered()
@@ -130,9 +131,12 @@ func _on_audio_file_selected(path: String) -> void:
 	_check_files_ready()
 
 func _on_midi_file_selected(path: String) -> void:
-	_midi_file_path = path
-	var filename: String = path.get_file()
-	midi_file_button.text = "MIDI: " + filename
+	_midi_resource = load(path)
+	if _midi_resource:
+		var filename: String = path.get_file()
+		midi_file_button.text = "MIDI: " + filename
+	else:
+		midi_file_button.text = "MIDI: ERROR"
 	_check_files_ready()
 
 func _on_start_button_pressed() -> void:
@@ -142,7 +146,7 @@ func _on_start_button_pressed() -> void:
 		_start_playback()
 
 func _start_playback() -> void:
-	if not music_player.load_files(_audio_stream, _midi_file_path):
+	if not music_player.load_files(_audio_stream, _midi_resource):
 		push_error("RhythmTest: Failed to load files")
 		return
 	

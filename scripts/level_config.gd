@@ -13,8 +13,9 @@ extends Resource
 ## Artist or creator of the track (displayed in Now Playing UI)
 @export var artist_name: String = ""
 
-## Path to the MIDI file for this level (relative to res://)
-@export_file("*.mid") var midi_file_path: String = ""
+## MIDI resource for this level (imported .mid file)
+## Drag the .mid file from FileSystem into this field in the Inspector
+@export var midi_resource: Resource = null
 
 ## Path to the audio file for this level (relative to res://)
 @export_file("*.ogg", "*.mp3", "*.wav") var audio_file_path: String = ""

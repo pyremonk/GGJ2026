@@ -4,7 +4,6 @@
 
 [node name="Opening" instance=ExtResource("1_ke3tw")]
 next_scene_path = "res://scenes/temp_main_menu.tscn"
-images = Array[Texture2D]([])
 
 [node name="ImagesContainer" parent="." index="1"]
 theme_override_constants/margin_left = 64

@@ -9,7 +9,6 @@ signal playback_paused
 signal playback_resumed
 
 @export var audio_stream: AudioStream
-@export var midi_file_path: String = ""
 @export var default_bpm: float = 120.0
 @export var audio_delay_ms: float = 2000.0  ## Delay audio to give UI time to animate beats
 
@@ -33,25 +32,16 @@ func _ready() -> void:
 	_audio_delay_timer.timeout.connect(_start_delayed_audio)
 	add_child(_audio_delay_timer)
 
-func load_files(p_audio_stream: AudioStream, p_midi_path: String) -> bool:
+func load_files(p_audio_stream: AudioStream, p_midi_resource: Resource) -> bool:
 	audio_stream = p_audio_stream
-	midi_file_path = p_midi_path
+	_midi_resource = p_midi_resource
 	
 	if audio_stream == null:
 		push_error("MusicPlayer: No audio stream provided")
 		return false
 	
-	if midi_file_path.is_empty():
-		push_error("MusicPlayer: No MIDI file path provided")
-		return false
-	
-	if not FileAccess.file_exists(midi_file_path):
-		push_error("MusicPlayer: MIDI file not found: " + midi_file_path)
-		return false
-	
-	_midi_resource = load(midi_file_path)
 	if _midi_resource == null:
-		push_error("MusicPlayer: Failed to load MIDI file: " + midi_file_path)
+		push_error("MusicPlayer: No MIDI resource provided")
 		return false
 	
 	audio_player.stream = audio_stream
