@@ -53,8 +53,8 @@ func is_valid() -> bool:
 	if track_name.is_empty():
 		push_warning("LevelConfig: track_name is empty")
 		return false
-	if midi_file_path.is_empty():
-		push_warning("LevelConfig: midi_file_path is empty")
+	if midi_resource == null:
+		push_warning("LevelConfig: midi_resource is null")
 		return false
 	if audio_file_path.is_empty():
 		push_warning("LevelConfig: audio_file_path is empty")

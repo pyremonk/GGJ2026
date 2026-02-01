@@ -22,7 +22,7 @@ script = ExtResource("2_fd6kl")
 level_name = "Espionage on the Dance Floor"
 track_name = "Espionage on the Dance Floor"
 artist_name = "pyremonk"
-midi_file_path = "uid://drg7k0r54o0x7"
+midi_resource = "uid://drg7k0r54o0x7"
 audio_file_path = "uid://cyaqn5cfo7cey"
 metadata/_custom_type_script = "uid://bv3gmwsjx0bbb"
 
