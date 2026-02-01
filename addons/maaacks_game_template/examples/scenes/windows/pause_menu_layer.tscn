@@ -62,19 +62,13 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("5_bv5ec")
 text = "Load Game"
 
-[node name="OptionsButton" type="Button" parent="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="4"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_fonts/font = ExtResource("5_bv5ec")
-text = "Options"
-
-[node name="MainMenuButton" type="Button" parent="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="5"]
+[node name="MainMenuButton" type="Button" parent="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="4"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_bv5ec")
 text = "Main Menu"
 
-[node name="ExitButton" type="Button" parent="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="6"]
+[node name="ExitButton" type="Button" parent="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="5"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_bv5ec")
@@ -103,7 +97,6 @@ title = "Confirm Exit"
 [connection signal="pressed" from="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/RestartButton" to="PauseMenu" method="_on_restart_button_pressed"]
 [connection signal="pressed" from="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/SaveGameButton" to="PauseMenu" method="_on_save_game_button_pressed"]
 [connection signal="pressed" from="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/LoadGameButton" to="PauseMenu" method="_on_load_game_button_pressed"]
-[connection signal="pressed" from="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/OptionsButton" to="PauseMenu" method="_on_options_button_pressed"]
 [connection signal="pressed" from="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/MainMenuButton" to="PauseMenu" method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/ExitButton" to="PauseMenu" method="_on_exit_button_pressed"]
 

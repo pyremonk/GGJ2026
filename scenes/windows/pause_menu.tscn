@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://b0x8acab1b4oe"]
+[gd_scene load_steps=6 format=3 uid="uid://b0x8acab1b4oe"]
 
 [ext_resource type="PackedScene" uid="uid://6gdbfi0172ji" path="res://addons/maaacks_game_template/base/nodes/windows/overlaid_window.tscn" id="1_yn032"]
 [ext_resource type="Script" uid="uid://dr4iktfflpdxh" path="res://scenes/windows/pause_menu.gd" id="2_00o4m"]
 [ext_resource type="PackedScene" uid="uid://bh3sehmvmyc7n" path="res://scenes/windows/pause_menu_options_window.tscn" id="3_mdvg7"]
+[ext_resource type="FontFile" uid="uid://hctk0kjbbd1k" path="res://assets/fonts/FiraCode-Regular.ttf" id="4_00o4m"]
 [ext_resource type="PackedScene" uid="uid://cwt4p3bufkke5" path="res://addons/maaacks_game_template/base/nodes/windows/confirmation_overlaid_window.tscn" id="4_6lma4"]
 
 [node name="PauseMenu" instance=ExtResource("1_yn032")]
@@ -24,6 +25,7 @@ menu_container_node_path = NodePath("..")
 pauses_game = true
 
 [node name="TitleLabel" parent="ContentContainer/BoxContainer/TitleMargin/BoxContainer" index="0"]
+theme_override_fonts/font = ExtResource("4_00o4m")
 text = "Paused"
 
 [node name="BodyMargin" parent="ContentContainer/BoxContainer" index="1"]
@@ -33,32 +35,30 @@ visible = false
 size_flags_vertical = 3
 
 [node name="CloseButton" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="0"]
+theme_override_fonts/font = ExtResource("4_00o4m")
 text = "Resume"
 
 [node name="RestartButton" type="Button" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="1"]
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_00o4m")
 text = "Restart"
 
-[node name="OptionsButton" type="Button" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="2"]
+[node name="MainMenuButton" type="Button" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="2"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Options"
-
-[node name="MainMenuButton" type="Button" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="3"]
-unique_name_in_owner = true
-layout_mode = 2
+theme_override_fonts/font = ExtResource("4_00o4m")
 text = "Main Menu"
 
-[node name="ExitButton" type="Button" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="4"]
+[node name="ExitButton" type="Button" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="3"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_fonts/font = ExtResource("4_00o4m")
 text = "Exit Game"
 
 [node name="RestartConfirmation" parent="." index="1" instance=ExtResource("4_6lma4")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-update_content = true
 text = "Restart the game?"
 title = "Confirm Restart"
 
@@ -67,7 +67,6 @@ unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
-update_content = true
 text = "Exit to the main menu?"
 title = "Confirm Exit"
 
@@ -75,11 +74,9 @@ title = "Confirm Exit"
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-update_content = true
 text = "Exit the game?"
 title = "Confirm Exit"
 
 [connection signal="pressed" from="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/RestartButton" to="." method="_on_restart_button_pressed"]
-[connection signal="pressed" from="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/OptionsButton" to="." method="_on_options_button_pressed"]
 [connection signal="pressed" from="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons/ExitButton" to="." method="_on_exit_button_pressed"]

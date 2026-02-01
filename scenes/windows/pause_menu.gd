@@ -14,7 +14,6 @@ extends OverlaidWindow
 @onready var main_menu_confirmation : ConfirmationOverlaidWindow = get_node(main_menu_confirmation_node_path)
 @onready var exit_confirmation : ConfirmationOverlaidWindow = get_node(exit_confirmation_node_path)
 @onready var menu_container : Node = get_node(menu_container_node_path)
-@onready var options_button = %OptionsButton
 @onready var main_menu_button = %MainMenuButton
 @onready var exit_button = %ExitButton
 
@@ -81,7 +80,7 @@ func _refresh_exit_button() -> void:
 	exit_button.visible = !OS.has_feature("web")
 
 func _refresh_options_button() -> void:
-	options_button.visible = options_menu_scene != null
+	pass
 
 func _refresh_main_menu_button() -> void:
 	main_menu_button.visible = !get_main_menu_scene_path().is_empty()
@@ -98,7 +97,7 @@ func _on_restart_button_pressed() -> void:
 	_show_window(restart_confirmation)
 
 func _on_options_button_pressed() -> void:
-	_load_and_show_menu(options_menu_scene)
+	pass
 
 func _on_main_menu_button_pressed() -> void:
 	_show_window(main_menu_confirmation)
@@ -111,7 +110,9 @@ func _on_restart_confirmation_confirmed() -> void:
 	close()
 
 func _on_main_menu_confirmation_confirmed():
-	_load_scene(get_main_menu_scene_path())
+	# Immediately unpause the tree before loading the main menu
+	get_tree().paused = false
+	SceneLoader.load_scene(get_main_menu_scene_path())
 
 func _on_exit_confirmation_confirmed():
 	get_tree().quit()

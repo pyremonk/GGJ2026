@@ -14,6 +14,8 @@ const LEVEL_3_PATH: String = "res://scenes/game_scene/levels/gameplay_level_3.ts
 
 
 func _ready() -> void:
+	# Ensure the scene tree is not paused when the main menu loads
+	get_tree().paused = false
 	_load_level_names()
 	_connect_buttons()
 	_register_menu_music()
