@@ -8,6 +8,11 @@ extends Node2D
 @onready var target_left: Sprite2D = $TargetLeft
 @onready var target_right: Sprite2D = $TargetRight
 
+@onready var feedback_label_up: Label = %FeedbackLabelUp
+@onready var feedback_label_down: Label = %FeedbackLabelDown
+@onready var feedback_label_left: Label = %FeedbackLabelLeft
+@onready var feedback_label_right: Label = %FeedbackLabelRight
+
 const TARGET_DISTANCE: float = 120.0
 const RED_COLOR: Color = Color(1.0, 0.3, 0.3)  ## Red - notes within 75%
 const ORANGE_COLOR: Color = Color(1.0, 0.6, 0.2)  ## Orange - notes within 50%
@@ -29,10 +34,15 @@ var _notes_at_50_percent: Dictionary = {
 
 var _color_tweens: Dictionary = {}  ## Active color tweens per direction
 var _scale_tweens: Dictionary = {}  ## Active scale tweens per direction
+var _label_tweens: Dictionary = {}  ## Active label tweens per direction
 
 
 func _ready() -> void:
-	pass
+	# Hide all feedback labels initially
+	feedback_label_up.visible = false
+	feedback_label_down.visible = false
+	feedback_label_left.visible = false
+	feedback_label_right.visible = false
 
 
 func set_proximity_zone(direction: String, zone: String, entering: bool) -> void:
@@ -119,6 +129,33 @@ func get_target_position(direction: String) -> Vector2:
 	return global_position
 
 
+func show_feedback(direction: String, feedback_text: String, feedback_color: Color = Color.WHITE) -> void:
+	"""Display feedback text at the specified note target"""
+	var label: Label = _get_label_by_direction(direction)
+	if label == null:
+		return
+	
+	# Kill existing tween for this label
+	if _label_tweens.has(direction) and _label_tweens[direction] != null:
+		if _label_tweens[direction].is_valid():
+			_label_tweens[direction].kill()
+	
+	# Set label properties
+	label.text = feedback_text
+	label.modulate = feedback_color
+	label.modulate.a = 1.0
+	label.scale = Vector2(1.0, 1.0)
+	label.visible = true
+	
+	# Animate: scale up slightly, then fade out
+	var tween: Tween = create_tween()
+	_label_tweens[direction] = tween
+	tween.set_parallel(false)
+	tween.tween_property(label, "scale", Vector2(1.3, 1.3), 0.1)
+	tween.tween_property(label, "modulate:a", 0.0, 0.4)
+	tween.tween_callback(func() -> void: label.visible = false)
+
+
 func _get_target_by_direction(direction: String) -> Sprite2D:
 	"""Internal helper to get target sprite by direction string"""
 	match direction:
@@ -130,4 +167,18 @@ func _get_target_by_direction(direction: String) -> Sprite2D:
 			return target_left
 		"right":
 			return target_right
+	return null
+
+
+func _get_label_by_direction(direction: String) -> Label:
+	"""Internal helper to get feedback label by direction string"""
+	match direction:
+		"up":
+			return feedback_label_up
+		"down":
+			return feedback_label_down
+		"left":
+			return feedback_label_left
+		"right":
+			return feedback_label_right
 	return null
