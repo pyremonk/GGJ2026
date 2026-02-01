@@ -40,6 +40,37 @@ GlobalState.save()  # Always call after modifying state
 
 **Key principle**: Never compute beats from BPM manually when MIDI tempo map exists. Use signal-driven architecture.
 
+### CRITICAL: Direction Naming Convention
+**Direction always refers to the SPAWN SIDE, which corresponds to the INPUT KEY and FEEDBACK LOCATION.**
+
+Notes spawn from one side and travel toward the player at the center. The visual movement direction is irrelevant to gameplay logic:
+- **"left" direction** = spawns from LEFT side, player presses LEFT arrow, feedback at LEFT target
+- **"right" direction** = spawns from RIGHT side, player presses RIGHT arrow, feedback at RIGHT target
+- **"up" direction** = spawns from TOP side, player presses UP arrow, feedback at UP target
+- **"down" direction** = spawns from BOTTOM side, player presses DOWN arrow, feedback at DOWN target
+
+**Example**: A note with direction="left" spawns at position (321, 531) on the LEFT side and travels toward the center. The player must press the LEFT arrow key to hit it, and feedback displays at the LEFT target.
+
+**MIDI Note Mapping** (in `MIDIEventRouter.gd` and `NoteSpawner.gd`):
+```gdscript
+const TARGET_MAPPING: Dictionary = {
+    60: "left",    # C4 - spawns LEFT, player presses LEFT
+    61: "left",    # C#4 - spawns LEFT, player presses LEFT
+    62: "left",    # D4 - spawns LEFT, player presses LEFT
+    63: "up",      # D#4 - spawns TOP, player presses UP
+    64: "up",      # E4 - spawns TOP, player presses UP
+    65: "up",      # F4 - spawns TOP, player presses UP
+    66: "right",   # F#4 - spawns RIGHT, player presses RIGHT
+    67: "right",   # G4 - spawns RIGHT, player presses RIGHT
+    68: "right",   # G#4 - spawns RIGHT, player presses RIGHT
+    69: "down",    # A4 - spawns BOTTOM, player presses DOWN
+    70: "down",    # A#4 - spawns BOTTOM, player presses DOWN
+    71: "down"     # B4 - spawns BOTTOM, player presses DOWN
+}
+```
+
+**This mapping MUST be identical in both files.** Never modify one without updating the other.
+
 ## GDScript Conventions (Strict)
 
 ### Type Safety

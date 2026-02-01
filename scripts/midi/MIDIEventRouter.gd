@@ -8,20 +8,21 @@ signal beat_event(beat: BeatEvent)
 @export var beat_subdivision: int = 4
 @export var target_track_index: int = 1
 
-## Maps MIDI notes to target directions (must match NoteSpawner)
+## Maps MIDI notes to directions (direction = spawn side = input key = feedback location)
+## Note movement direction is purely visual - gameplay uses spawn side for all logic
 const TARGET_MAPPING: Dictionary = {
-	60: "left",    # C4
-	61: "left",    # C#4
-	62: "left",    # D4
-	63: "up",      # D#4
-	64: "up",      # E4
-	65: "up",      # F4
-	66: "right",   # F#4
-	67: "right",   # G4
-	68: "right",   # G#4
-	69: "down",    # A4
-	70: "down",    # A#4
-	71: "down"     # B4
+	60: "left",    # C4 - spawns LEFT, player presses LEFT
+	61: "left",    # C#4 - spawns LEFT, player presses LEFT
+	62: "left",    # D4 - spawns LEFT, player presses LEFT
+	63: "up",      # D#4 - spawns TOP, player presses UP
+	64: "up",      # E4 - spawns TOP, player presses UP
+	65: "up",      # F4 - spawns TOP, player presses UP
+	66: "right",   # F#4 - spawns RIGHT, player presses RIGHT
+	67: "right",   # G4 - spawns RIGHT, player presses RIGHT
+	68: "right",   # G#4 - spawns RIGHT, player presses RIGHT
+	69: "down",    # A4 - spawns BOTTOM, player presses DOWN
+	70: "down",    # A#4 - spawns BOTTOM, player presses DOWN
+	71: "down"     # B4 - spawns BOTTOM, player presses DOWN
 }
 
 var _midi_resource: Resource = null
