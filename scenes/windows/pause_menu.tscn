@@ -51,6 +51,7 @@ text = "Main Menu"
 
 [node name="ExitButton" type="Button" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="3"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_override_fonts/font = ExtResource("4_00o4m")
 text = "Exit Game"

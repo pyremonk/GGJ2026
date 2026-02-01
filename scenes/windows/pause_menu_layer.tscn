@@ -41,7 +41,6 @@ theme_override_fonts/font = ExtResource("5_1r40g")
 text = "Resume"
 
 [node name="RestartButton" type="Button" parent="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="1"]
-visible = false
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_1r40g")
 text = "Restart"
@@ -68,6 +67,7 @@ text = "Main Menu"
 
 [node name="ExitButton" type="Button" parent="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="5"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_1r40g")
 text = "Exit Game"

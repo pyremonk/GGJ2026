@@ -145,14 +145,13 @@ func _on_pause_menu_hidden() -> void:
 		_pause_layer.queue_free()
 		_pause_layer = null
 	
-	# Only resume if we don't want to stay paused
-	# The pause menu's close() already unpaused the tree, but we need to resume music
-	if not _should_stay_paused:
+	# Resume music if the game is not paused (Resume button was pressed)
+	# The pause menu's close() already unpaused the tree when Resume was clicked
+	if not get_tree().paused:
+		# Resume button was clicked - unpause and resume music
 		if _music_player and _music_player.has_method("resume_playback"):
 			_music_player.resume_playback()
-	else:
-		# User closed the menu but wants to stay paused - re-pause the tree
-		get_tree().paused = true
+		_should_stay_paused = false
 
 
 func _on_level_won(next_level_path: String) -> void:

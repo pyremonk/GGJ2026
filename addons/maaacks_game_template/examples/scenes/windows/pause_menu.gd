@@ -25,6 +25,25 @@ func get_main_menu_scene_path() -> String:
 		return AppConfig.main_menu_scene_path
 	return main_menu_scene_path
 
+func close() -> void:
+	"""Override to always unpause when resuming from pause menu"""
+	if not visible:
+		return
+	# Always unpause when closing the pause menu (Resume button)
+	_scene_tree.paused = false
+	# Restore mouse mode
+	Input.set_mouse_mode(_initial_mouse_mode)
+	# Restore focus
+	if is_instance_valid(_initial_focus_control) and _initial_focus_control.is_inside_tree():
+		_initial_focus_control.focus_mode = _initial_focus_mode
+		_initial_focus_control.grab_focus()
+	# Clean up exclusive control node
+	if _exclusive_control_node:
+		_exclusive_control_node.queue_free()
+	# Hide window and emit signals (from WindowContainer.close())
+	hide()
+	closed.emit()
+
 func close_window() -> void:
 	if open_window != null:
 		if open_window.has_method("close"):
