@@ -50,6 +50,10 @@ func judge_input(input_time_ms: float, target_beat: BeatEvent, action_name: Stri
 	# Check if input was too early (before good window)
 	if offset_ms < -HitRating.GOOD_WINDOW_MS:
 		# Input was way too early - trigger early input rejection
+		# Mark as "hit" (even though it's wrong) to prevent beat_missed signal
+		target_beat.was_hit = true
+		if _note_scheduler != null:
+			_note_scheduler.mark_beat_hit(target_beat)
 		early_input_rejected.emit(target_beat, offset_ms)
 		return
 	

@@ -1,0 +1,14 @@
+[remap]
+
+importer="com.nlaha.godotmidi"
+type="MidiResource"
+uid="uid://drg7k0r54o0x7"
+path="res://.godot/imported/Espionage on the Dance Floor MIDI Map.mid-7cf9c222e8f8566faee3dd76ae18ae3d.res"
+
+[deps]
+
+source_file="res://assets/tracks/espionage/Espionage on the Dance Floor MIDI Map.mid"
+dest_files=["res://.godot/imported/Espionage on the Dance Floor MIDI Map.mid-7cf9c222e8f8566faee3dd76ae18ae3d.res"]
+
+[params]
+

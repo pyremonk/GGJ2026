@@ -92,9 +92,11 @@ func get_current_time_ms() -> float:
 	
 	var current_real_time_ms: float = Time.get_ticks_msec()
 	
-	# MIDI timing starts immediately, but audio is delayed
-	# Return MIDI time (time since playback started)
-	var song_time_ms: float = current_real_time_ms - _playback_start_time_ms
+	# CRITICAL: Start timing at negative offset to create pre-roll period
+	# This allows notes to spawn and animate BEFORE beat 0
+	# Audio is delayed by audio_delay_ms, so timeline starts at -audio_delay_ms
+	# This aligns song time 0 with when audio actually plays, not when playback starts
+	var song_time_ms: float = current_real_time_ms - _playback_start_time_ms - audio_delay_ms
 	
 	# Add audio buffer latency compensation for sample-accurate timing
 	var audio_latency_ms: float = (AudioServer.get_time_to_next_mix() + AudioServer.get_output_latency()) * 1000.0

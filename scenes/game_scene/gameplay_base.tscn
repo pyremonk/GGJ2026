@@ -15,6 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://bkxfp2m1ohvhf" path="res://scenes/game_scene/note.tscn" id="12_note"]
 [ext_resource type="Script" uid="uid://uk83hyg0spa" path="res://scripts/gameplay/NoteSpawner.gd" id="13_spawner"]
 [ext_resource type="Script" uid="uid://bx6bjwnqhxgcg" path="res://scripts/ui/ui_state_manager.gd" id="14_ui_state"]
+[ext_resource type="Script" path="res://scripts/gameplay/PlayerEffects.gd" id="15_effects"]
 
 [sub_resource type="Resource" id="Resource_4gle3"]
 script = ExtResource("2_fd6kl")
@@ -27,14 +28,15 @@ metadata/_custom_type_script = "uid://bv3gmwsjx0bbb"
 
 [node name="GameplayBase" type="Node2D"]
 script = ExtResource("1_w8vk8")
-test_midi_file = "uid://dr2m4wli715el"
-test_audio_file = "uid://b1h3mivv1u1qf"
+test_midi_file = "uid://drg7k0r54o0x7"
+test_audio_file = "uid://cyaqn5cfo7cey"
 level_config = SubResource("Resource_4gle3")
 
 [node name="MusicPlayer" type="Node" parent="." groups=["music_player"]]
 unique_name_in_owner = true
 script = ExtResource("6_music")
-audio_delay_ms = 0.0
+default_bpm = 90.0
+audio_delay_ms = 2667.0
 
 [node name="MIDIEventRouter" type="Node" parent="."]
 unique_name_in_owner = true
@@ -60,11 +62,15 @@ script = ExtResource("11_referee")
 unique_name_in_owner = true
 script = ExtResource("13_spawner")
 note_scene = ExtResource("12_note")
-spawn_lookahead_ms = 3000.0
+spawn_lookahead_ms = 2667.0
 
 [node name="UIStateManager" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("14_ui_state")
+
+[node name="PlayerEffects" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("15_effects")
 
 [node name="BackgroundSpawnLayer" type="CanvasLayer" parent="."]
 layer = -1

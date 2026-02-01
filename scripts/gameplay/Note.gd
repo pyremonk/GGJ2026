@@ -23,6 +23,7 @@ var _has_entered_50_percent: bool = false
 var _has_entered_75_percent: bool = false
 var _has_approached_target: bool = false
 var _approach_threshold: float = 0.5  ## Trigger at 50% progress for highlight pulse
+var _is_destroyed: bool = false  ## Prevents double-processing (hit + miss, etc.)
 
 func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: float, p_spawn_time_ms: float, p_midi_note: int, p_beat_number: int, p_direction: String) -> void:
 	spawn_position = p_spawn_pos
@@ -88,9 +89,10 @@ func _process(_delta: float) -> void:
 
 func on_hit(rating: int) -> void:
 	"""Called when note is successfully hit - stop movement and play hit effect"""
-	if not _is_traveling:
-		return  # Already hit or arrived
+	if _is_destroyed:
+		return  # Already processed
 	
+	_is_destroyed = true
 	_is_traveling = false
 	
 	# Play hit effect based on rating
@@ -116,9 +118,10 @@ func on_hit(rating: int) -> void:
 
 func on_missed() -> void:
 	"""Called when note reaches target without being hit - rush at player"""
-	if not _is_traveling:
+	if _is_destroyed:
 		return  # Already processed
 	
+	_is_destroyed = true
 	_is_traveling = false
 	
 	# Get player position (center of gameplay area)
@@ -146,9 +149,10 @@ func on_missed() -> void:
 
 func on_early_hit() -> void:
 	"""Called when player hits too early - rush at player and shrink"""
-	if not _is_traveling:
+	if _is_destroyed:
 		return  # Already processed
 	
+	_is_destroyed = true
 	_is_traveling = false
 	
 	# Get player position (center of gameplay area)

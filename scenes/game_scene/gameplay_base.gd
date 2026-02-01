@@ -25,6 +25,7 @@ signal level_lost
 @onready var referee: Node = %Referee
 @onready var note_spawner: Node = %NoteSpawner
 @onready var ui_state_manager: Node = %UIStateManager
+@onready var player_effects: Node = %PlayerEffects
 
 const BASE_RESOLUTION: Vector2 = Vector2(1920, 1080)
 
@@ -51,6 +52,10 @@ func _ready() -> void:
 	# Add gameplay_area to group for note early-hit effect
 	if gameplay_area:
 		gameplay_area.add_to_group("gameplay_area")
+	
+	# Set up player effects
+	if player_effects and player:
+		player_effects.set_player_sprite(player)
 	
 	# Auto-start for testing
 	call_deferred("_start_test_level")
@@ -102,6 +107,11 @@ func _setup_rhythm_system() -> void:
 	# Connect NoteScheduler beat_missed signal
 	if note_scheduler.has_signal("beat_missed"):
 		note_scheduler.beat_missed.connect(_on_beat_missed)
+	
+	# Store note scheduler for beat pulse timing
+	if player_effects:
+		player_effects._note_scheduler = note_scheduler
+		player_effects._music_player = music_player
 
 
 func _start_test_level() -> void:
@@ -254,6 +264,10 @@ func _on_beat_missed(beat: BeatEvent) -> void:
 	"""Handle missed beats - trigger visual feedback and update UI state"""
 	if note_spawner:
 		note_spawner.on_note_missed(beat)
+	
+	# Trigger flash effect when missed note hits player
+	if player_effects:
+		player_effects.flash_on_missed_hit()
 	
 	# Update UIStateManager with miss
 	if ui_state_manager:
