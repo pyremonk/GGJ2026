@@ -117,6 +117,11 @@ func _on_player_input_for_effects(action_name: String, input_time_ms: float) -> 
 	"""Trigger visual effects on player input"""
 	if player_effects:
 		player_effects.pulse_on_input(action_name)
+	
+	# Pulse the corresponding note target
+	var direction: String = _action_to_direction(action_name)
+	if not direction.is_empty() and note_targets:
+		note_targets.pulse_target(direction)
 
 
 func _start_test_level() -> void:
@@ -334,6 +339,20 @@ func get_spawn_point(note_name: String) -> Node2D:
 	if spawn_point == null:
 		push_error("Spawn point not found: " + note_name)
 	return spawn_point
+
+
+func _action_to_direction(action_name: String) -> String:
+	"""Convert action name to direction string for note targets"""
+	match action_name:
+		"action_up":
+			return "up"
+		"action_down":
+			return "down"
+		"action_left":
+			return "left"
+		"action_right":
+			return "right"
+	return ""
 
 
 func get_scale_factor() -> Vector2:

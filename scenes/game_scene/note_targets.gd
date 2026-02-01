@@ -27,6 +27,9 @@ var _notes_at_50_percent: Dictionary = {
 	"right": 0
 }  ## Track number of notes within 50% progress per direction
 
+var _color_tweens: Dictionary = {}  ## Active color tweens per direction
+var _scale_tweens: Dictionary = {}  ## Active scale tweens per direction
+
 
 func _ready() -> void:
 	pass
@@ -69,7 +72,13 @@ func _update_target_color(direction: String) -> void:
 	
 	# Only tween if color actually changed
 	if target.modulate != desired_color:
+		# Kill existing color tween for this direction
+		if _color_tweens.has(direction) and _color_tweens[direction] != null:
+			if _color_tweens[direction].is_valid():
+				_color_tweens[direction].kill()
+		
 		var tween: Tween = create_tween()
+		_color_tweens[direction] = tween
 		tween.tween_property(target, "modulate", desired_color, 0.1)
 
 
@@ -82,6 +91,24 @@ func highlight_target(direction: String) -> void:
 		var tween: Tween = create_tween()
 		tween.tween_property(target, "scale", Vector2(1.2, 1.2), 0.1)
 		tween.tween_property(target, "scale", Vector2(1.0, 1.0), 0.1)
+
+
+func pulse_target(direction: String) -> void:
+	"""Pulse a specific target when player presses input (slightly subtler than highlight)"""
+	var target: Sprite2D = _get_target_by_direction(direction)
+	
+	if target:
+		# Kill existing scale tween for this direction
+		if _scale_tweens.has(direction) and _scale_tweens[direction] != null:
+			if _scale_tweens[direction].is_valid():
+				_scale_tweens[direction].kill()
+		
+		# Quick scale pulse on input press
+		var tween: Tween = create_tween()
+		_scale_tweens[direction] = tween
+		tween.set_parallel(false)
+		tween.tween_property(target, "scale", Vector2(1.6, 1.6), 0.16)
+		tween.tween_property(target, "scale", Vector2(1.0, 1.0), 0.24)
 
 
 func get_target_position(direction: String) -> Vector2:
