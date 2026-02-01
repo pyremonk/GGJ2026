@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cay7hrdwwhxcc"]
+[gd_scene load_steps=5 format=3 uid="uid://cay7hrdwwhxcc"]
 
 [ext_resource type="Script" uid="uid://pbuiek0iu0qt" path="res://scenes/temp_main_menu.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ka12p3gbdunr" path="res://assets/game_icon/Night-at-the-Masquerade-Title.png" id="2_dot13"]
 [ext_resource type="FontFile" uid="uid://hctk0kjbbd1k" path="res://assets/fonts/FiraCode-Regular.ttf" id="3_jgys0"]
+[ext_resource type="AudioStream" path="res://assets/sfx/menu_music/MenuMusic.ogg" id="4_menu_music"]
 
 [node name="TempMainMenu" type="Control"]
 layout_mode = 3
@@ -85,3 +86,8 @@ Code by Claude Sonnet 4.5
 Mask & note illustrations from FreePik.com
 "
 horizontal_alignment = 1
+
+[node name="BackgroundMusicPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_menu_music")
+autoplay = true
+bus = &"Music"

@@ -35,6 +35,7 @@ level_loading_screen = NodePath("../LevelLoadingScreen")
 
 [node name="LevelManager" type="Node" parent="." node_paths=PackedStringArray("level_loader")]
 script = ExtResource("5_wr4n6")
+auto_load = false
 level_loader = NodePath("../LevelLoader")
 starting_level_path = "res://scenes/game_scene/levels/gameplay_level_1.tscn"
 game_won_scene = ExtResource("6_ukb12")

@@ -10,11 +10,13 @@ const LEVEL_3_PATH: String = "res://scenes/game_scene/levels/gameplay_level_3.ts
 @onready var level_1_button: Button = %Level1Button
 @onready var level_2_button: Button = %Level2Button
 @onready var level_3_button: Button = %Level3Button
+@onready var background_music_player: AudioStreamPlayer = $BackgroundMusicPlayer
 
 
 func _ready() -> void:
 	_load_level_names()
 	_connect_buttons()
+	_register_menu_music()
 
 
 func _load_level_names() -> void:
@@ -79,3 +81,11 @@ func _on_level_2_button_pressed() -> void:
 
 func _on_level_3_button_pressed() -> void:
 	SceneLoader.load_scene(LEVEL_3_PATH)
+
+
+func _register_menu_music() -> void:
+	"""Register the background music player with MenuMusicManager"""
+	if background_music_player:
+		MenuMusicManager.register_menu_music_player(background_music_player)
+	else:
+		push_warning("TempMainMenu: BackgroundMusicPlayer not found")

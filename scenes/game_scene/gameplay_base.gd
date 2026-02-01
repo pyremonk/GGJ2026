@@ -234,9 +234,12 @@ func _start_test_level() -> void:
 		right_ui.set_track_info(track_name, artist_name, duration_ms)
 	
 	# Start playback after a short delay
-		await get_tree().create_timer(1.0).timeout
-		music_player.start_playback()
-		print("GameplayBase: Playback started!")
+	await get_tree().create_timer(1.0).timeout
+	music_player.start_playback()
+	print("GameplayBase: Playback started!")
+	
+	# Stop menu music when level track starts
+	MenuMusicManager.stop_menu_music()
 
 
 func _process(_delta: float) -> void:
