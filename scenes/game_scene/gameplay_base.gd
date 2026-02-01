@@ -344,6 +344,10 @@ func _on_judgment_for_note_hit(beat: BeatEvent, _offset_ms: float, rating: int) 
 
 func _on_beat_missed(beat: BeatEvent) -> void:
 	"""Handle missed beats - trigger visual feedback and update UI state"""
+	# Notify Referee of the miss (this resets combo to 0)
+	if referee:
+		referee._on_judgment_made(beat, 0.0, HitRating.Rating.MISS)
+	
 	if note_spawner:
 		note_spawner.on_note_missed(beat)
 	

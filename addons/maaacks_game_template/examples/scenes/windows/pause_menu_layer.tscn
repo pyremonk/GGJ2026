@@ -44,6 +44,7 @@ theme_override_fonts/font = ExtResource("5_bv5ec")
 text = "Resume"
 
 [node name="RestartButton" type="Button" parent="PauseMenu/ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="1"]
+visible = false
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5_bv5ec")
 text = "Restart"
