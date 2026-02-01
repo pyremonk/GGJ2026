@@ -154,9 +154,9 @@ func _generate_beats_from_notes() -> Array[BeatEvent]:
 				continue
 			
 			var time_ms: float = _ticks_to_ms(int(accumulated_ticks))
-			print("    -> Note-on ACCEPTED at tick %.0f (%.0fms), note=%d" % [accumulated_ticks, time_ms, note_pitch])
+			print("    -> Note-on ACCEPTED at tick %.0f (%.0fms), note=%d, velocity=%d" % [accumulated_ticks, time_ms, note_pitch, velocity])
 			var direction: String = TARGET_MAPPING.get(note_pitch, "down")
-			var beat: BeatEvent = BeatEvent.new(time_ms, beat_number, note_pitch, direction)
+			var beat: BeatEvent = BeatEvent.new(time_ms, beat_number, note_pitch, direction, velocity)
 			beats.append(beat)
 			beat_number += 1
 			last_note_on_tick = accumulated_ticks

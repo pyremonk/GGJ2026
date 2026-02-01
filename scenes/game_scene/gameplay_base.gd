@@ -29,6 +29,14 @@ signal level_lost
 
 const BASE_RESOLUTION: Vector2 = Vector2(1920, 1080)
 
+# Veilshift velocity to mask_id mapping (0-indexed for UI)
+const VEILSHIFT_VELOCITY_TO_MASK: Dictionary = {
+	69: 0,  # Player-Mask-1 -> mask_index 0
+	79: 1,  # Player-Mask-2 -> mask_index 1
+	89: 2,  # Player-Mask-3 -> mask_index 2
+	99: 3   # Player-Mask-4 -> mask_index 3
+}
+
 # Test MIDI/Audio files
 @export_file("*.mid") var test_midi_file: String = "res://assets/testing_track/Testing_Track.mid"
 @export_file("*.ogg") var test_audio_file: String = "res://assets/testing_track/Testing_Track.ogg"
@@ -57,6 +65,15 @@ func _ready() -> void:
 	if player_effects and player:
 		player_effects.set_player_sprite(player)
 		player_effects.set_note_targets(note_targets)
+		# Connect veilshift signal to UI
+		if player_effects.has_signal("veilshift_collected"):
+			player_effects.veilshift_collected.connect(_on_veilshift_collected)
+		# Reset player sprite and effects
+		player_effects.reset()
+	
+	# Reset UI masks to default state
+	if right_ui and right_ui.has_method("reset_masks"):
+		right_ui.reset_masks()
 	
 	# Auto-start for testing
 	call_deferred("_start_test_level")
@@ -113,7 +130,7 @@ func _setup_rhythm_system() -> void:
 		note_scheduler.beat_missed.connect(_on_beat_missed)
 
 
-func _on_player_input_for_effects(action_name: String, input_time_ms: float) -> void:
+func _on_player_input_for_effects(action_name: String, _input_time_ms: float) -> void:
 	"""Trigger visual effects on player input"""
 	if player_effects:
 		player_effects.pulse_on_input(action_name)
@@ -262,7 +279,7 @@ func _on_player_input(action_name: String, input_time_ms: float) -> void:
 		judge.judge_input(input_time_ms, next_beat, action_name)
 
 
-func _on_judgment_for_ui_state(beat: BeatEvent, offset_ms: float, rating: int) -> void:
+func _on_judgment_for_ui_state(beat: BeatEvent, _offset_ms: float, rating: int) -> void:
 	"""Forward judgment to UIStateManager for resonance tracking and show feedback"""
 	# Show feedback in left panel
 	if left_ui and left_ui.has_method("show_feedback"):
@@ -285,10 +302,22 @@ func _on_judgment_for_ui_state(beat: BeatEvent, offset_ms: float, rating: int) -
 		ui_state_manager.update_judgment(rating, combo, score)
 
 
-func _on_judgment_for_note_hit(beat: BeatEvent, offset_ms: float, rating: int) -> void:
-	"""Forward successful hits to note spawner for visual feedback"""
+func _on_judgment_for_note_hit(beat: BeatEvent, _offset_ms: float, rating: int) -> void:
+	"""Forward successful hits to note spawner for visual feedback and check for veilshifts"""
 	if rating != HitRating.Rating.MISS and note_spawner:
 		note_spawner.on_note_hit(beat, rating)
+	
+	# Check if this was a veilshift note that was successfully hit
+	if rating != HitRating.Rating.MISS and beat.velocity in VEILSHIFT_VELOCITY_TO_MASK:
+		var mask_index: int = VEILSHIFT_VELOCITY_TO_MASK[beat.velocity]
+		var mask_id: int = mask_index + 1  # Convert to 1-indexed for PlayerEffects
+		
+		print("GameplayBase: Veilshift hit! velocity=%d, mask_id=%d" % [beat.velocity, mask_id])
+		
+		# Transform player sprite
+		if player_effects:
+			player_effects.transform_veilshift(mask_id)
+		# Note: PlayerEffects will emit veilshift_collected signal which triggers UI update
 
 
 func _on_beat_missed(beat: BeatEvent) -> void:
@@ -315,10 +344,19 @@ func _on_beat_missed(beat: BeatEvent) -> void:
 		ui_state_manager.update_judgment(HitRating.Rating.MISS, combo, score)
 
 
-func _on_early_input_rejected(beat: BeatEvent, offset_ms: float) -> void:
+func _on_early_input_rejected(beat: BeatEvent, _offset_ms: float) -> void:
 	"""Handle early input - trigger penalty visual"""
 	if note_spawner:
 		note_spawner.on_early_input(beat)
+
+
+func _on_veilshift_collected(mask_id: int) -> void:
+	"""Handle veilshift collection - update UI mask indicators"""
+	var mask_index: int = mask_id - 1  # Convert from 1-indexed to 0-indexed
+	
+	if ui_state_manager and ui_state_manager.has_method("collect_mask"):
+		ui_state_manager.collect_mask(mask_index)
+		print("GameplayBase: Veilshift collected, UI updated (mask_index=%d)" % mask_index)
 
 
 func _on_track_finished() -> void:

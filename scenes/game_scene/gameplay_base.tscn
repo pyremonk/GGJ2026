@@ -3,7 +3,6 @@
 [ext_resource type="Script" uid="uid://da6x5ulbfqo7c" path="res://scenes/game_scene/gameplay_base.gd" id="1_w8vk8"]
 [ext_resource type="Script" uid="uid://bv3gmwsjx0bbb" path="res://scripts/level_config.gd" id="2_fd6kl"]
 [ext_resource type="PackedScene" uid="uid://btfgjp5yah2lo" path="res://scenes/game_scene/note_targets.tscn" id="2_note_targets"]
-[ext_resource type="Texture2D" uid="uid://7pw5e0uajrv6" path="res://assets/temp_player/Temp-Player.png" id="3_player"]
 [ext_resource type="PackedScene" uid="uid://bahffr0vbydb8" path="res://scenes/game_scene/ui/left_panel.tscn" id="4_left_panel"]
 [ext_resource type="PackedScene" uid="uid://bcfmgljt3hfkr" path="res://scenes/game_scene/ui/right_panel.tscn" id="5_right_panel"]
 [ext_resource type="Script" uid="uid://cwsymq7h76gjw" path="res://scripts/audio/MusicPlayer.gd" id="6_music"]
@@ -13,6 +12,7 @@
 [ext_resource type="Script" uid="uid://d13j1u14xjk5c" path="res://scripts/gameplay/Judge.gd" id="10_judge"]
 [ext_resource type="Script" uid="uid://ds0r002f5aq8u" path="res://scripts/gameplay/Referee.gd" id="11_referee"]
 [ext_resource type="PackedScene" uid="uid://bkxfp2m1ohvhf" path="res://scenes/game_scene/note.tscn" id="12_note"]
+[ext_resource type="Texture2D" uid="uid://fm2bpbagahri" path="res://assets/masks/Player-Mask.png" id="13_4gle3"]
 [ext_resource type="Script" uid="uid://uk83hyg0spa" path="res://scripts/gameplay/NoteSpawner.gd" id="13_spawner"]
 [ext_resource type="Script" uid="uid://bx6bjwnqhxgcg" path="res://scripts/ui/ui_state_manager.gd" id="14_ui_state"]
 [ext_resource type="Script" uid="uid://b6qbk3wkpmwsg" path="res://scripts/gameplay/PlayerEffects.gd" id="15_effects"]
@@ -129,7 +129,7 @@ position = Vector2(960, 540)
 [node name="Player" type="Sprite2D" parent="GameplayLayer/GameplayArea"]
 unique_name_in_owner = true
 texture_filter = 1
-texture = ExtResource("3_player")
+texture = ExtResource("13_4gle3")
 
 [node name="NoteTargets" parent="GameplayLayer/GameplayArea" instance=ExtResource("2_note_targets")]
 unique_name_in_owner = true

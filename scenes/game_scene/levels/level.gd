@@ -10,8 +10,19 @@ var level_state: LevelState
 
 func _ready() -> void:
 	level_state = GameState.get_level_state(scene_file_path)
-	%ColorPickerButton.color = level_state.color
-	%BackgroundColor.color = level_state.color
+	
+	if level_state == null:
+		push_error("Level: Failed to get level state for %s" % scene_file_path)
+		return
+	
+	# Optional UI nodes for template levels (not used in gameplay levels)
+	var color_picker: ColorPickerButton = get_node_or_null("%ColorPickerButton")
+	var background_color: ColorRect = get_node_or_null("%BackgroundColor")
+	
+	if color_picker and background_color:
+		color_picker.color = level_state.color
+		background_color.color = level_state.color
+	
 	if not level_state.tutorial_read:
 		open_tutorials()
 	
@@ -42,13 +53,17 @@ func _on_gameplay_level_lost() -> void:
 
 
 func open_tutorials() -> void:
-	%TutorialManager.open_tutorials()
+	var tutorial_manager: Node = get_node_or_null("%TutorialManager")
+	if tutorial_manager and tutorial_manager.has_method("open_tutorials"):
+		tutorial_manager.open_tutorials()
 	level_state.tutorial_read = true
 	GlobalState.save()
 
 
 func _on_color_picker_button_color_changed(color: Color) -> void:
-	%BackgroundColor.color = color
+	var background_color: ColorRect = get_node_or_null("%BackgroundColor")
+	if background_color:
+		background_color.color = color
 	level_state.color = color
 	GlobalState.save()
 

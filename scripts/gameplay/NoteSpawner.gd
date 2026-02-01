@@ -130,7 +130,8 @@ func spawn_note(beat: BeatEvent) -> void:
 		spawn_time_ms,
 		beat.midi_note,
 		beat.beat_number,
-		target_direction
+		target_direction,
+		beat.velocity
 	)
 	
 	# Connect note signals

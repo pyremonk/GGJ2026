@@ -9,6 +9,14 @@ signal entered_50_percent_zone(note: Note)
 signal entered_75_percent_zone(note: Note)
 signal approaching_target(note: Note)  ## For highlight pulse animation
 
+## Veilshift velocity mapping (velocity -> mask data)
+const VEILSHIFT_VELOCITIES: Dictionary = {
+	69: {"mask_id": 1, "texture_path": "res://assets/masks/Player-Mask-1.png"},
+	79: {"mask_id": 2, "texture_path": "res://assets/masks/Player-Mask-2.png"},
+	89: {"mask_id": 3, "texture_path": "res://assets/masks/Player-Mask-3.png"},
+	99: {"mask_id": 4, "texture_path": "res://assets/masks/Player-Mask-4.png"}
+}
+
 var spawn_position: Vector2 = Vector2.ZERO
 var target_position: Vector2 = Vector2.ZERO
 var arrival_time_ms: float = 0.0
@@ -16,13 +24,15 @@ var spawn_time_ms: float = 0.0
 var movement_direction: String = ""  ## "up", "down", "left", "right"
 var midi_note: int = -1
 var beat_number: int = 0
+var velocity: int = 0
+var is_veilshift: bool = false
+var veilshift_mask_id: int = 0  ## 0 = normal note, 1-4 = veilshift mask
 
 var _is_traveling: bool = false
 var _travel_duration_ms: float = 0.0
 var _has_entered_50_percent: bool = false
 var _has_entered_75_percent: bool = false
 var _has_approached_target: bool = false
-var _approach_threshold: float = 0.5  ## Trigger at 50% progress for highlight pulse
 var _is_destroyed: bool = false  ## Prevents double-processing (hit + miss, etc.)
 
 @onready var _hit_sound_player: AudioStreamPlayer = AudioStreamPlayer.new()
@@ -33,7 +43,7 @@ func _ready() -> void:
 	_hit_sound_player.bus = "SFX"
 	add_child(_hit_sound_player)
 
-func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: float, p_spawn_time_ms: float, p_midi_note: int, p_beat_number: int, p_direction: String) -> void:
+func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: float, p_spawn_time_ms: float, p_midi_note: int, p_beat_number: int, p_direction: String, p_velocity: int = 0) -> void:
 	spawn_position = p_spawn_pos
 	target_position = p_target_pos
 	arrival_time_ms = p_arrival_time_ms
@@ -41,6 +51,19 @@ func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: 
 	midi_note = p_midi_note
 	beat_number = p_beat_number
 	movement_direction = p_direction
+	velocity = p_velocity
+	
+	# Check if this is a veilshift note
+	if velocity in VEILSHIFT_VELOCITIES:
+		is_veilshift = true
+		var veilshift_data: Dictionary = VEILSHIFT_VELOCITIES[velocity]
+		veilshift_mask_id = veilshift_data["mask_id"]
+		var veilshift_texture: Texture2D = load(veilshift_data["texture_path"])
+		if veilshift_texture:
+			texture = veilshift_texture
+			print("Note: Veilshift note (velocity=%d, mask_id=%d) loaded sprite" % [velocity, veilshift_mask_id])
+		else:
+			push_error("Note: Failed to load veilshift texture: %s" % veilshift_data["texture_path"])
 	
 	_travel_duration_ms = arrival_time_ms - spawn_time_ms
 	

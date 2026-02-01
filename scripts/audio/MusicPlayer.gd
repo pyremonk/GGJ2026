@@ -5,6 +5,8 @@ extends Node
 
 signal playback_started
 signal playback_stopped
+signal playback_paused
+signal playback_resumed
 
 @export var audio_stream: AudioStream
 @export var midi_file_path: String = ""
@@ -15,8 +17,11 @@ signal playback_stopped
 
 var _midi_resource: Resource = null
 var _is_playing: bool = false
+var _is_paused: bool = false
 var _playback_start_time_ms: float = 0.0
 var _audio_start_time_ms: float = 0.0
+var _pause_time_ms: float = 0.0
+var _paused_song_position_ms: float = 0.0
 var _audio_delay_timer: Timer = null
 
 func _ready() -> void:
@@ -78,17 +83,45 @@ func _start_delayed_audio() -> void:
 	if _is_playing:
 		audio_player.play()
 
+func pause_playback() -> void:
+	if not _is_playing or _is_paused:
+		return
+	
+	_is_paused = true
+	_pause_time_ms = Time.get_ticks_msec()
+	_paused_song_position_ms = get_current_time_ms()
+	audio_player.stream_paused = true
+	playback_paused.emit()
+
+
+func resume_playback() -> void:
+	if not _is_playing or not _is_paused:
+		return
+	
+	var pause_duration_ms: float = Time.get_ticks_msec() - _pause_time_ms
+	_playback_start_time_ms += pause_duration_ms
+	_audio_start_time_ms += pause_duration_ms
+	
+	_is_paused = false
+	audio_player.stream_paused = false
+	playback_resumed.emit()
+
+
 func stop_playback() -> void:
 	if not _is_playing:
 		return
 	
 	_is_playing = false
+	_is_paused = false
 	audio_player.stop()
 	playback_stopped.emit()
 
 func get_current_time_ms() -> float:
 	if not _is_playing:
 		return 0.0
+	
+	if _is_paused:
+		return _paused_song_position_ms
 	
 	var current_real_time_ms: float = Time.get_ticks_msec()
 	
@@ -136,6 +169,10 @@ func get_midi_resource() -> Resource:
 
 func is_playing() -> bool:
 	return _is_playing
+
+
+func is_paused() -> bool:
+	return _is_paused
 
 func _on_audio_finished() -> void:
 	stop_playback()

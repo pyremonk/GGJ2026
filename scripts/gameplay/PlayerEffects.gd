@@ -3,8 +3,10 @@ extends Node
 ## Manages visual effects for the player sprite.
 ## - Pulses to the beat
 ## - Flashes red and strobes on missed note hit
+## - Handles veilshift transformations
 
 signal effect_complete
+signal veilshift_collected(mask_id: int)
 
 @export var pulse_scale_amount: float = 1.15
 @export var pulse_duration_ms: float = 150.0
@@ -13,6 +15,18 @@ signal effect_complete
 @export var flash_duration_s: float = 0.5
 @export var strobe_cycle_time_s: float = 0.08
 @export var strobe_min_alpha: float = 0.7  ## Minimum opacity during strobe (0.7 = 70%)
+
+@export var veilshift_flash_duration_s: float = 0.3  ## Duration of transformation effect
+
+## Veilshift mask texture paths
+const VEILSHIFT_MASKS: Dictionary = {
+	1: "res://assets/masks/Player-Mask-1.png",
+	2: "res://assets/masks/Player-Mask-2.png",
+	3: "res://assets/masks/Player-Mask-3.png",
+	4: "res://assets/masks/Player-Mask-4.png"
+}
+
+const DEFAULT_PLAYER_MASK: String = "res://assets/masks/Player-Mask.png"
 
 var _player_sprite: Sprite2D = null
 var _original_modulate: Color = Color.WHITE
@@ -153,6 +167,49 @@ func _on_flash_complete() -> void:
 	effect_complete.emit()
 
 
+func transform_veilshift(mask_id: int) -> void:
+	"""Transform player sprite to new mask with visual effect"""
+	if _player_sprite == null:
+		push_error("PlayerEffects: Cannot transform veilshift - no player sprite set")
+		return
+	
+	if mask_id < 1 or mask_id > 4:
+		push_error("PlayerEffects: Invalid mask_id %d (must be 1-4)" % mask_id)
+		return
+	
+	# Get mask texture path
+	var texture_path: String = VEILSHIFT_MASKS.get(mask_id, "")
+	if texture_path.is_empty():
+		push_error("PlayerEffects: No texture path for mask_id %d" % mask_id)
+		return
+	
+	# Load and apply new texture
+	var new_texture: Texture2D = load(texture_path)
+	if new_texture == null:
+		push_error("PlayerEffects: Failed to load veilshift texture: %s" % texture_path)
+		return
+	
+	# Visual effect: flash white and scale pulse
+	var veilshift_tween: Tween = create_tween()
+	veilshift_tween.set_parallel(true)
+	
+	# Flash to white briefly
+	veilshift_tween.tween_property(_player_sprite, "modulate", Color.WHITE * 1.5, veilshift_flash_duration_s * 0.3)
+	veilshift_tween.chain().tween_property(_player_sprite, "modulate", _original_modulate, veilshift_flash_duration_s * 0.7)
+	
+	# Scale pulse (bigger than normal pulse)
+	veilshift_tween.tween_property(_player_sprite, "scale", Vector2(1.3, 1.3), veilshift_flash_duration_s * 0.3)
+	veilshift_tween.chain().tween_property(_player_sprite, "scale", Vector2(1.0, 1.0), veilshift_flash_duration_s * 0.7).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	
+	# Change texture immediately
+	_player_sprite.texture = new_texture
+	
+	# Emit signal for UI update
+	veilshift_collected.emit(mask_id)
+	
+	print("PlayerEffects: Transformed to mask %d" % mask_id)
+
+
 func reset() -> void:
 	"""Reset all effects and restore original state"""
 	if _beat_pulse_tween and _beat_pulse_tween.is_valid():
@@ -166,3 +223,7 @@ func reset() -> void:
 	if _player_sprite:
 		_player_sprite.scale = Vector2(1.0, 1.0)
 		_player_sprite.modulate = _original_modulate
+		# Restore default player mask texture
+		var default_texture: Texture2D = load(DEFAULT_PLAYER_MASK)
+		if default_texture:
+			_player_sprite.texture = default_texture

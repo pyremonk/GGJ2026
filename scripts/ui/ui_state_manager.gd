@@ -143,3 +143,8 @@ func _emit_resonance_update() -> void:
 	var resonance_pct: float = get_resonance_percentage()
 	var accuracy_pct: float = get_accuracy_percentage()
 	resonance_updated.emit(resonance_pct, hits, total_notes, accuracy_pct)
+
+## Call when the audio track finishes playing
+## Should be connected from MusicPlayer or Referee when track ends
+func on_track_completed() -> void:
+	track_completed.emit()

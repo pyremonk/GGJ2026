@@ -13,6 +13,7 @@ extends Control
 @onready var artist_label: Label = %ArtistLabel
 @onready var track_progress_bar: ProgressBar = %TrackProgressBar
 @onready var time_display_label: Label = %TimeDisplayLabel
+@onready var pause_resume_button: Button = %PauseResumeButton
 
 @export var mask_fade_duration: float = 0.3
 
@@ -22,6 +23,37 @@ var track_duration_ms: float = 0.0
 func _ready() -> void:
 	_initialize_mask_icons()
 	_initialize_now_playing_display()
+	_connect_pause_button()
+	_connect_music_player_signals()
+
+
+func _connect_music_player_signals() -> void:
+	"""Connect to MusicPlayer signals to sync pause button state"""
+	var music_player: Node = _find_music_player()
+	if music_player:
+		if music_player.has_signal("playback_started"):
+			music_player.playback_started.connect(_on_music_playback_started)
+		if music_player.has_signal("playback_stopped"):
+			music_player.playback_stopped.connect(_on_music_playback_stopped)
+		if music_player.has_signal("playback_paused"):
+			music_player.playback_paused.connect(_on_music_playback_paused)
+		if music_player.has_signal("playback_resumed"):
+			music_player.playback_resumed.connect(_on_music_playback_resumed)
+
+
+func _find_music_player() -> Node:
+	"""Find MusicPlayer node in the scene tree"""
+	var gameplay_base: Node = get_tree().root.find_child("GameplayBase", true, false)
+	if not gameplay_base:
+		return null
+	
+	return gameplay_base.find_child("MusicPlayer", true, false)
+
+
+func _connect_pause_button() -> void:
+	"""Connect pause/resume button signal"""
+	if pause_resume_button:
+		pause_resume_button.pressed.connect(_on_pause_resume_button_pressed)
 
 
 func _initialize_mask_icons() -> void:
@@ -128,3 +160,63 @@ func _animate_label(label: Label) -> void:
 	tween.set_trans(Tween.TRANS_ELASTIC)
 	tween.tween_property(label, "scale", Vector2(1.15, 1.15), 0.2)
 	tween.tween_property(label, "scale", Vector2(1.0, 1.0), 0.3)
+
+
+func _on_pause_resume_button_pressed() -> void:
+	"""Toggle pause state and update button text"""
+	var music_player: Node = _find_music_player()
+	if not music_player:
+		return
+	
+	# Toggle music pause/resume
+	if music_player.has_method("is_paused") and music_player.is_paused():
+		if music_player.has_method("resume_playback"):
+			music_player.resume_playback()
+	else:
+		if music_player.has_method("pause_playback"):
+			music_player.pause_playback()
+	
+	# Also toggle tree pause state
+	get_tree().paused = not get_tree().paused
+	_update_pause_button_text()
+
+
+func _on_music_playback_started() -> void:
+	"""Handle music playback started signal"""
+	set_pause_button_enabled(true)
+	_update_pause_button_text()
+
+
+func _on_music_playback_stopped() -> void:
+	"""Handle music playback stopped signal"""
+	set_pause_button_enabled(false)
+	if pause_resume_button:
+		pause_resume_button.text = "Pause"
+
+
+func _on_music_playback_paused() -> void:
+	"""Handle music playback paused signal"""
+	_update_pause_button_text()
+
+
+func _on_music_playback_resumed() -> void:
+	"""Handle music playback resumed signal"""
+	_update_pause_button_text()
+
+
+func _update_pause_button_text() -> void:
+	"""Update button text based on current pause state"""
+	if not pause_resume_button:
+		return
+	
+	if get_tree().paused:
+		pause_resume_button.text = "Resume"
+	else:
+		pause_resume_button.text = "Pause"
+
+
+func set_pause_button_enabled(enabled: bool) -> void:
+	"""Enable or disable the pause button (e.g., when track is not playing)"""
+	if pause_resume_button:
+		pause_resume_button.disabled = not enabled
+

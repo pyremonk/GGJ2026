@@ -54,6 +54,7 @@ theme_override_constants/margin_top = 10
 
 [node name="Mask1Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer/MarginContainer"]
 unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.49803922)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 texture = ExtResource("3_mask1")
@@ -65,6 +66,7 @@ theme_override_constants/margin_top = 10
 
 [node name="Mask2Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer/MarginContainer2"]
 unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.49803922)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 texture = ExtResource("4_mask2")
@@ -76,6 +78,7 @@ theme_override_constants/margin_top = 10
 
 [node name="Mask3Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer/MarginContainer3"]
 unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.49803922)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 texture = ExtResource("5_mask3")
@@ -87,6 +90,7 @@ theme_override_constants/margin_top = 10
 
 [node name="Mask4Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer/MarginContainer4"]
 unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.49803922)
 custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 texture = ExtResource("6_mask4")
@@ -122,10 +126,21 @@ theme_override_font_sizes/font_size = 18
 text = "By: Artist"
 horizontal_alignment = 1
 
-[node name="TrackProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+[node name="TrackProgressContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PauseResumeButton" type="Button" parent="MarginContainer/VBoxContainer/VBoxContainer/TrackProgressContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Pause"
+
+[node name="TrackProgressBar" type="ProgressBar" parent="MarginContainer/VBoxContainer/VBoxContainer/TrackProgressContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
+size_flags_horizontal = 3
 show_percentage = false
 
 [node name="TimeDisplayLabel" type="Label" parent="MarginContainer/VBoxContainer/VBoxContainer"]
