@@ -17,6 +17,7 @@ var _pause_layer: CanvasLayer = null
 var _music_player: Node = null
 var _gameplay_base: Node = null
 var _next_level_path: String = ""
+var _should_stay_paused: bool = false  # Track if we want to stay paused after menu closes
 
 
 func _ready() -> void:
@@ -29,8 +30,13 @@ func _ready() -> void:
 
 
 func _find_gameplay_base() -> void:
-	"""Find the GameplayBase node"""
-	_gameplay_base = find_child("GameplayBase", true, false)
+	"""Find the GameplayBase node (sibling)"""
+	var parent: Node = get_parent()
+	if not parent:
+		push_error("TempGameplayManager: No parent node")
+		return
+	
+	_gameplay_base = parent.get_node_or_null("GameplayBase")
 	if not _gameplay_base:
 		push_error("TempGameplayManager: Could not find GameplayBase node")
 
@@ -62,7 +68,15 @@ func _connect_level_signals() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	"""Handle ESC key for pause menu"""
 	if event.is_action_pressed("ui_cancel"):
-		_toggle_pause()
+		# Toggle between paused and unpaused
+		if _pause_layer:
+			# Pause menu is open - close it and resume
+			_should_stay_paused = false
+			if _pause_layer.has_method("hide"):
+				_pause_layer.hide()
+		else:
+			# No pause menu - open it and pause
+			_pause_game()
 		get_viewport().set_input_as_handled()
 
 
@@ -84,24 +98,30 @@ func _pause_game() -> void:
 	if _music_player and _music_player.has_method("pause_playback"):
 		_music_player.pause_playback()
 	
-	# Set tree to paused
+	# Set tree to paused BEFORE showing the menu
+	# The pause menu will save this as initial_pause_state
 	get_tree().paused = true
+	_should_stay_paused = true
 	
 	# Instantiate and show pause menu layer
 	var pause_scene: PackedScene = load(PAUSE_MENU_LAYER_PATH) as PackedScene
 	if pause_scene:
 		_pause_layer = pause_scene.instantiate() as CanvasLayer
+		_pause_layer.visible = true  # Ensure it's visible
 		add_child(_pause_layer)
 		
-		# Connect to pause menu signals
-		var pause_menu: Node = _pause_layer.get_node("%PauseMenu")
+		# Override the pause menu's main menu path to use our temp main menu
+		var pause_menu: Node = _pause_layer.get_node_or_null("%PauseMenu")
 		if pause_menu:
-			if pause_menu.has_signal("resume_pressed"):
-				pause_menu.resume_pressed.connect(_on_pause_resume_pressed)
-			if pause_menu.has_signal("main_menu_pressed"):
-				pause_menu.main_menu_pressed.connect(_on_pause_main_menu_pressed)
-			if pause_menu.has_signal("restart_pressed"):
-				pause_menu.restart_pressed.connect(_on_pause_restart_pressed)
+			if "main_menu_scene_path" in pause_menu:
+				pause_menu.main_menu_scene_path = TEMP_MAIN_MENU_PATH
+			
+			if pause_menu.has_signal("hidden"):
+				pause_menu.hidden.connect(_on_pause_menu_hidden)
+			
+			# Force show the pause menu
+			if pause_menu.has_method("show"):
+				pause_menu.show()
 
 
 func _resume_game() -> void:
@@ -118,21 +138,21 @@ func _resume_game() -> void:
 	get_tree().paused = false
 
 
-func _on_pause_resume_pressed() -> void:
-	"""Handle resume button from pause menu"""
-	_resume_game()
-
-
-func _on_pause_main_menu_pressed() -> void:
-	"""Handle main menu button from pause menu"""
-	get_tree().paused = false
-	SceneLoader.load_scene(TEMP_MAIN_MENU_PATH)
-
-
-func _on_pause_restart_pressed() -> void:
-	"""Handle restart button from pause menu"""
-	get_tree().paused = false
-	SceneLoader.reload_current_scene()
+func _on_pause_menu_hidden() -> void:
+	"""Handle pause menu being hidden (user pressed resume or closed it)"""
+	# Clean up pause layer
+	if _pause_layer:
+		_pause_layer.queue_free()
+		_pause_layer = null
+	
+	# Only resume if we don't want to stay paused
+	# The pause menu's close() already unpaused the tree, but we need to resume music
+	if not _should_stay_paused:
+		if _music_player and _music_player.has_method("resume_playback"):
+			_music_player.resume_playback()
+	else:
+		# User closed the menu but wants to stay paused - re-pause the tree
+		get_tree().paused = true
 
 
 func _on_level_won(next_level_path: String) -> void:

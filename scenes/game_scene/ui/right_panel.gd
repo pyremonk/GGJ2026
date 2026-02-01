@@ -25,6 +25,13 @@ func _ready() -> void:
 	_initialize_now_playing_display()
 	_connect_pause_button()
 	_connect_music_player_signals()
+	# Set process mode to always run, even when paused, so we can update button text
+	process_mode = Node.PROCESS_MODE_ALWAYS
+
+
+func _process(_delta: float) -> void:
+	"""Update pause button text to stay in sync with game pause state"""
+	_update_pause_button_text()
 
 
 func _connect_music_player_signals() -> void:
@@ -43,11 +50,17 @@ func _connect_music_player_signals() -> void:
 
 func _find_music_player() -> Node:
 	"""Find MusicPlayer node in the scene tree"""
-	var gameplay_base: Node = get_tree().root.find_child("GameplayBase", true, false)
+	# We're in: GameplayBase -> UILayer -> RightUI
+	# We need: GameplayBase -> MusicPlayer
+	var ui_layer: Node = get_parent()  # UILayer
+	if not ui_layer:
+		return null
+	
+	var gameplay_base: Node = ui_layer.get_parent()  # GameplayBase
 	if not gameplay_base:
 		return null
 	
-	return gameplay_base.find_child("MusicPlayer", true, false)
+	return gameplay_base.get_node_or_null("%MusicPlayer")
 
 
 func _connect_pause_button() -> void:
@@ -168,16 +181,20 @@ func _on_pause_resume_button_pressed() -> void:
 	if not music_player:
 		return
 	
-	# Toggle music pause/resume
-	if music_player.has_method("is_paused") and music_player.is_paused():
+	# Check current pause state from the tree (single source of truth)
+	var is_currently_paused: bool = get_tree().paused
+	
+	if is_currently_paused:
+		# Resume
+		get_tree().paused = false
 		if music_player.has_method("resume_playback"):
 			music_player.resume_playback()
 	else:
+		# Pause
+		get_tree().paused = true
 		if music_player.has_method("pause_playback"):
 			music_player.pause_playback()
 	
-	# Also toggle tree pause state
-	get_tree().paused = not get_tree().paused
 	_update_pause_button_text()
 
 

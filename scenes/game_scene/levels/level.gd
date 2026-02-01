@@ -12,18 +12,20 @@ func _ready() -> void:
 	level_state = GameState.get_level_state(scene_file_path)
 	
 	if level_state == null:
-		push_error("Level: Failed to get level state for %s" % scene_file_path)
-		return
+		# Level state is optional for gameplay levels
+		# Only push warning if we have UI elements that need it
+		if get_node_or_null("%ColorPickerButton") or get_node_or_null("%TutorialManager"):
+			push_warning("Level: Failed to get level state for %s" % scene_file_path)
 	
 	# Optional UI nodes for template levels (not used in gameplay levels)
 	var color_picker: ColorPickerButton = get_node_or_null("%ColorPickerButton")
 	var background_color: ColorRect = get_node_or_null("%BackgroundColor")
 	
-	if color_picker and background_color:
+	if color_picker and background_color and level_state:
 		color_picker.color = level_state.color
 		background_color.color = level_state.color
 	
-	if not level_state.tutorial_read:
+	if level_state and not level_state.tutorial_read:
 		open_tutorials()
 	
 	# Connect gameplay_base signals if it exists
@@ -56,16 +58,18 @@ func open_tutorials() -> void:
 	var tutorial_manager: Node = get_node_or_null("%TutorialManager")
 	if tutorial_manager and tutorial_manager.has_method("open_tutorials"):
 		tutorial_manager.open_tutorials()
-	level_state.tutorial_read = true
-	GlobalState.save()
+	if level_state:
+		level_state.tutorial_read = true
+		GlobalState.save()
 
 
 func _on_color_picker_button_color_changed(color: Color) -> void:
 	var background_color: ColorRect = get_node_or_null("%BackgroundColor")
 	if background_color:
 		background_color.color = color
-	level_state.color = color
-	GlobalState.save()
+	if level_state:
+		level_state.color = color
+		GlobalState.save()
 
 
 func _on_tutorial_button_pressed() -> void:
