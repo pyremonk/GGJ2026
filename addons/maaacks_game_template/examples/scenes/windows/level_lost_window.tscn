@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://whpmo2tt4mwr"]
+[gd_scene load_steps=6 format=3 uid="uid://whpmo2tt4mwr"]
 
 [ext_resource type="PackedScene" uid="uid://6gdbfi0172ji" path="res://addons/maaacks_game_template/base/nodes/windows/overlaid_window.tscn" id="1_lib5d"]
 [ext_resource type="Script" uid="uid://8a1olklsvlpx" path="res://addons/maaacks_game_template/examples/scenes/windows/level_lost_window.gd" id="2_lib5d"]
 [ext_resource type="PackedScene" uid="uid://cwt4p3bufkke5" path="res://addons/maaacks_game_template/base/nodes/windows/confirmation_overlaid_window.tscn" id="3_503i8"]
+[ext_resource type="FontFile" uid="uid://hctk0kjbbd1k" path="res://assets/fonts/FiraCode-Regular.ttf" id="3_sypu5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q4kxe"]
 bg_color = Color(0, 0, 0, 1)
@@ -19,7 +20,11 @@ title_visible = false
 [node name="TitleMargin" parent="ContentContainer/BoxContainer" index="0"]
 visible = false
 
+[node name="TitleLabel" parent="ContentContainer/BoxContainer/TitleMargin/BoxContainer" index="0"]
+theme_override_fonts/font = ExtResource("3_sypu5")
+
 [node name="DescriptionLabel" parent="ContentContainer/BoxContainer/BodyMargin" index="0"]
+theme_override_fonts/normal_font = ExtResource("3_sypu5")
 text = "You lost..."
 
 [node name="MenuButtons" parent="ContentContainer/BoxContainer/MenuButtonsMargin" index="0"]
@@ -29,16 +34,19 @@ vertical = false
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_sypu5")
 text = "Exit"
 
 [node name="MainMenuButton" type="Button" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="1"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_sypu5")
 text = "Main Menu"
 
 [node name="CloseButton" parent="ContentContainer/BoxContainer/MenuButtonsMargin/MenuButtons" index="2"]
 size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("3_sypu5")
 text = "Restart"
 
 [node name="MainMenuConfirmation" parent="." index="1" instance=ExtResource("3_503i8")]

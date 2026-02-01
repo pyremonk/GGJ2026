@@ -10,10 +10,10 @@ config_version=5
 
 [application]
 
-config/name="GGJ2026"
+config/name="Last Night at the Masquerade"
 run/main_scene="res://scenes/opening/opening.tscn"
 config/features=PackedStringArray("4.5")
-config/icon="res://icon.png"
+config/icon="uid://difcoxvjakqht"
 
 [autoload]
 

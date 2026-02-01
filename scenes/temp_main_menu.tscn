@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cay7hrdwwhxcc"]
+[gd_scene load_steps=4 format=3 uid="uid://cay7hrdwwhxcc"]
 
 [ext_resource type="Script" uid="uid://pbuiek0iu0qt" path="res://scenes/temp_main_menu.gd" id="1_script"]
-[ext_resource type="FontFile" uid="uid://cl5od06yhe3rc" path="res://assets/fonts/beyond-arches-font/BeyondArchesDemoRegular-MAXXY.ttf" id="2_dot13"]
+[ext_resource type="Texture2D" uid="uid://ka12p3gbdunr" path="res://assets/game_icon/Night-at-the-Masquerade-Title.png" id="2_dot13"]
+[ext_resource type="FontFile" uid="uid://hctk0kjbbd1k" path="res://assets/fonts/FiraCode-Regular.ttf" id="3_jgys0"]
 
 [node name="TempMainMenu" type="Control"]
 layout_mode = 3
@@ -33,13 +34,9 @@ grow_vertical = 2
 layout_mode = 2
 theme_override_constants/separation = 30
 
-[node name="Title" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="Title" type="TextureRect" parent="CenterContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_fonts/font = ExtResource("2_dot13")
-theme_override_font_sizes/font_size = 48
-text = "Last Night at the Masquerade"
-horizontal_alignment = 1
+texture = ExtResource("2_dot13")
 
 [node name="Spacer" type="Control" parent="CenterContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 40)
@@ -49,6 +46,7 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 60)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_jgys0")
 theme_override_font_sizes/font_size = 24
 text = "Loading..."
 
@@ -56,6 +54,7 @@ text = "Loading..."
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 60)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_jgys0")
 theme_override_font_sizes/font_size = 24
 text = "Loading..."
 
@@ -63,5 +62,18 @@ text = "Loading..."
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 60)
 layout_mode = 2
+theme_override_fonts/font = ExtResource("3_jgys0")
 theme_override_font_sizes/font_size = 24
 text = "Loading..."
+
+[node name="Credits" type="Label" parent="CenterContainer/VBoxContainer"]
+custom_minimum_size = Vector2(400, 80)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("3_jgys0")
+text = "Design & Music by pyremonk (Anthony Free)
+
+Code by Claude Sonnet 4.5
+Mask & note illustrations from FreePik.com
+"
+horizontal_alignment = 1
