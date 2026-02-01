@@ -56,6 +56,7 @@ func _ready() -> void:
 	# Set up player effects
 	if player_effects and player:
 		player_effects.set_player_sprite(player)
+		player_effects.set_note_targets(note_targets)
 	
 	# Auto-start for testing
 	call_deferred("_start_test_level")
@@ -93,6 +94,9 @@ func _setup_rhythm_system() -> void:
 	# Connect PlayerInput to Judge for input processing
 	if player_input.has_signal("input_pressed"):
 		player_input.input_pressed.connect(_on_player_input)
+		# Also connect to PlayerEffects for visual feedback
+		if player_effects:
+			player_input.input_pressed.connect(_on_player_input_for_effects)
 	
 	# Connect Judge judgment_made signal to Referee
 	if judge.has_signal("judgment_made"):
@@ -107,11 +111,12 @@ func _setup_rhythm_system() -> void:
 	# Connect NoteScheduler beat_missed signal
 	if note_scheduler.has_signal("beat_missed"):
 		note_scheduler.beat_missed.connect(_on_beat_missed)
-	
-	# Store note scheduler for beat pulse timing
+
+
+func _on_player_input_for_effects(action_name: String, input_time_ms: float) -> void:
+	"""Trigger visual effects on player input"""
 	if player_effects:
-		player_effects._note_scheduler = note_scheduler
-		player_effects._music_player = music_player
+		player_effects.pulse_on_input(action_name)
 
 
 func _start_test_level() -> void:

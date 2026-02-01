@@ -20,35 +20,11 @@ var _beat_pulse_tween: Tween = null
 var _flash_tween: Tween = null
 var _is_flashing: bool = false
 
-# References for beat timing
-var _note_scheduler: Node = null
-var _music_player: Node = null
-var _last_quarter_note_time_ms: float = -1000.0  ## Time of last quarter note pulse
-var _quarter_note_interval_ms: float = 500.0  ## Duration of a quarter note in ms (updated from BPM)
+# References
+var _note_targets: Node2D = null
 
 
-func _process(_delta: float) -> void:
-	"""Check for quarter note timing to trigger pulse"""
-	if _music_player == null:
-		return
-	
-	if not _music_player.is_playing():
-		return
-	
-	var current_time_ms: float = _music_player.get_current_time_ms()
-	
-	# Update quarter note interval from current BPM
-	_update_quarter_note_interval()
-	
-	# Calculate which quarter note we should be on
-	var time_since_last_pulse: float = current_time_ms - _last_quarter_note_time_ms
-	
-	# Check if we've passed a quarter note boundary
-	if time_since_last_pulse >= _quarter_note_interval_ms:
-		# Calculate how many quarter notes have passed to stay in sync
-		var quarters_passed: int = int(time_since_last_pulse / _quarter_note_interval_ms)
-		_last_quarter_note_time_ms += quarters_passed * _quarter_note_interval_ms
-		pulse_to_beat()
+
 
 
 func set_player_sprite(sprite: Sprite2D) -> void:
@@ -58,20 +34,50 @@ func set_player_sprite(sprite: Sprite2D) -> void:
 		_original_modulate = _player_sprite.modulate
 
 
+func set_note_targets(targets: Node2D) -> void:
+	"""Set the note targets for pulsing on input"""
+	_note_targets = targets
+
+
+func pulse_on_input(action_name: String) -> void:
+	"""Pulse player sprite and corresponding note target on input"""
+	pulse_to_beat()
+	
+	# Pulse the corresponding note target
+	if _note_targets and _note_targets.has_method("highlight_target"):
+		var direction: String = _action_to_direction(action_name)
+		if not direction.is_empty():
+			_note_targets.highlight_target(direction)
+
+
+func _action_to_direction(action_name: String) -> String:
+	"""Convert action name to direction string"""
+	match action_name:
+		"action_up":
+			return "up"
+		"action_down":
+			return "down"
+		"action_left":
+			return "left"
+		"action_right":
+			return "right"
+		_:
+			return ""
+
+
 func pulse_to_beat() -> void:
-	"""Pulse the player sprite to the beat"""
+	"""Pulse the player sprite"""
 	if _player_sprite == null:
 		return
 	
 	if _is_flashing:
 		return  # Don't pulse during flash effect
 	
-	# Calculate pulse duration based on BPM
-	var bpm_pulse_duration: float = _calculate_pulse_duration_from_bpm()
-	
 	# Cancel existing pulse tween if any
 	if _beat_pulse_tween and _beat_pulse_tween.is_valid():
 		_beat_pulse_tween.kill()
+	
+	var pulse_duration: float = pulse_duration_ms / 1000.0
 	
 	_beat_pulse_tween = create_tween()
 	_beat_pulse_tween.set_ease(Tween.EASE_OUT)
@@ -82,7 +88,7 @@ func pulse_to_beat() -> void:
 		_player_sprite,
 		"scale",
 		Vector2(pulse_scale_amount, pulse_scale_amount),
-		bpm_pulse_duration * 0.3  # 30% of beat for expansion
+		pulse_duration * 0.3  # 30% of pulse for expansion
 	)
 	
 	# Scale back down with bounce
@@ -90,7 +96,7 @@ func pulse_to_beat() -> void:
 		_player_sprite,
 		"scale",
 		Vector2(1.0, 1.0),
-		bpm_pulse_duration * 0.7  # 70% of beat for contraction
+		pulse_duration * 0.7  # 70% of pulse for contraction
 	).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
 
 
@@ -139,33 +145,6 @@ func flash_on_missed_hit() -> void:
 	
 	# Mark flash as complete
 	_flash_tween.tween_callback(_on_flash_complete)
-
-
-func _update_quarter_note_interval() -> void:
-	"""Update the quarter note interval based on current BPM"""
-	if _music_player == null:
-		return
-	
-	# Try to get BPM from tempo map
-	if _music_player.has_method("get_tempo_map"):
-		var tempo_map: Array = _music_player.get_tempo_map()
-		if tempo_map.size() > 0:
-			var first_tempo = tempo_map[0]
-			var bpm: float = 120.0  # Default BPM
-			
-			if first_tempo is Dictionary:
-				bpm = first_tempo.get("bpm", 120.0)
-			elif "bpm" in first_tempo:
-				bpm = first_tempo.bpm
-			
-			# Calculate quarter note duration in milliseconds
-			_quarter_note_interval_ms = 60000.0 / bpm
-
-
-func _calculate_pulse_duration_from_bpm() -> float:
-	"""Calculate pulse duration based on current BPM"""
-	# Use a fraction of the quarter note for the pulse (about 1/4 of a beat)
-	return (_quarter_note_interval_ms / 1000.0) * 0.25
 
 
 func _on_flash_complete() -> void:
