@@ -268,6 +268,12 @@ func _on_judgment_for_ui_state(beat: BeatEvent, offset_ms: float, rating: int) -
 	if left_ui and left_ui.has_method("show_feedback"):
 		left_ui.show_feedback(rating)
 	
+	# Show feedback at note target position
+	if note_targets and note_targets.has_method("show_target_feedback"):
+		var rating_text: String = HitRating.get_rating_name(rating)
+		var rating_color: Color = HitRating.get_rating_color(rating)
+		note_targets.show_target_feedback(beat.direction, rating_text, rating_color)
+	
 	# Update UIStateManager for resonance tracking
 	if ui_state_manager:
 		var combo: int = 0
@@ -289,6 +295,10 @@ func _on_beat_missed(beat: BeatEvent) -> void:
 	"""Handle missed beats - trigger visual feedback and update UI state"""
 	if note_spawner:
 		note_spawner.on_note_missed(beat)
+	
+	# Show MISS feedback at note target
+	if note_targets and note_targets.has_method("show_target_feedback"):
+		note_targets.show_target_feedback(beat.direction, "MISS", HitRating.get_rating_color(HitRating.Rating.MISS))
 	
 	# Trigger flash effect when missed note hits player
 	if player_effects:

@@ -10,18 +10,18 @@ signal beat_event(beat: BeatEvent)
 
 ## Maps MIDI notes to target directions (must match NoteSpawner)
 const TARGET_MAPPING: Dictionary = {
-	60: "right",   # C4
-	61: "right",   # C#4
-	62: "right",   # D4
-	63: "down",    # D#4
-	64: "down",    # E4
-	65: "down",    # F4
-	66: "left",    # F#4
-	67: "left",    # G4
-	68: "left",    # G#4
-	69: "up",      # A4
-	70: "up",      # A#4
-	71: "up"       # B4
+	60: "left",    # C4
+	61: "left",    # C#4
+	62: "left",    # D4
+	63: "up",      # D#4
+	64: "up",      # E4
+	65: "up",      # F4
+	66: "right",   # F#4
+	67: "right",   # G4
+	68: "right",   # G#4
+	69: "down",    # A4
+	70: "down",    # A#4
+	71: "down"     # B4
 }
 
 var _midi_resource: Resource = null

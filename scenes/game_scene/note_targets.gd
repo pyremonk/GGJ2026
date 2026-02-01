@@ -129,7 +129,7 @@ func get_target_position(direction: String) -> Vector2:
 	return global_position
 
 
-func show_feedback(direction: String, feedback_text: String, feedback_color: Color = Color.WHITE) -> void:
+func show_target_feedback(direction: String, feedback_text: String, feedback_color: Color = Color.WHITE) -> void:
 	"""Display feedback text at the specified note target"""
 	var label: Label = _get_label_by_direction(direction)
 	if label == null:
