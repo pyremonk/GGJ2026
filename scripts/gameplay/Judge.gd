@@ -8,12 +8,12 @@ signal judgment_made(beat: BeatEvent, offset_ms: float, rating: HitRating.Rating
 
 @export var latency_offset_ms: float = 0.0
 
-## Maps input action names to directions
+## Maps input action names to directions (inverted to match screen space)
 const ACTION_TO_DIRECTION: Dictionary = {
-	"action_up": "up",
-	"action_down": "down",
-	"action_left": "left",
-	"action_right": "right"
+	"action_up": "down",
+	"action_down": "up",
+	"action_left": "right",
+	"action_right": "left"
 }
 
 var _note_scheduler: Node = null

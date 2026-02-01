@@ -34,6 +34,7 @@ level_config = SubResource("Resource_4gle3")
 [node name="MusicPlayer" type="Node" parent="." groups=["music_player"]]
 unique_name_in_owner = true
 script = ExtResource("6_music")
+audio_delay_ms = 0.0
 
 [node name="MIDIEventRouter" type="Node" parent="."]
 unique_name_in_owner = true

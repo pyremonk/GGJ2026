@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://bcfmgljt3hfkr"]
 
-[ext_resource type="Script" path="res://scenes/game_scene/ui/right_panel.gd" id="1_right"]
+[ext_resource type="Script" uid="uid://soj1wthjgkkv" path="res://scenes/game_scene/ui/right_panel.gd" id="1_right"]
 [ext_resource type="Texture2D" uid="uid://cwbq7m42r4050" path="res://assets/ui_labels/UI-Label_Veilshifts.png" id="2_veilshifts"]
-[ext_resource type="Texture2D" uid="uid://c6q5xvvj0blv5" path="res://assets/masks/Mask-1.png" id="3_mask1"]
-[ext_resource type="Texture2D" uid="uid://jvb1g2wgpwqc" path="res://assets/masks/Mask-2.png" id="4_mask2"]
-[ext_resource type="Texture2D" uid="uid://dsm3l8avmxs0v" path="res://assets/masks/Mask-3.png" id="5_mask3"]
-[ext_resource type="Texture2D" uid="uid://b502y7jh2vw3o" path="res://assets/masks/Mask-4.png" id="6_mask4"]
+[ext_resource type="Texture2D" uid="uid://dga13tcifaw0o" path="res://assets/masks/Mask-1.png" id="3_mask1"]
+[ext_resource type="Texture2D" uid="uid://dhimo7gesuhcy" path="res://assets/masks/Mask-2.png" id="4_mask2"]
+[ext_resource type="Texture2D" uid="uid://dbvufnud7w583" path="res://assets/masks/Mask-3.png" id="5_mask3"]
+[ext_resource type="Texture2D" uid="uid://drj4fmppco07p" path="res://assets/masks/Mask-4.png" id="6_mask4"]
 
 [node name="RightPanel" type="Control"]
 layout_mode = 3
@@ -21,7 +21,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.15, 0.05, 0.1, 0.8)
+color = Color(0.14901961, 0.050980393, 0.101960786, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -114,7 +114,6 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-max_value = 100.0
 show_percentage = false
 
 [node name="TimeDisplayLabel" type="Label" parent="MarginContainer/VBoxContainer"]
