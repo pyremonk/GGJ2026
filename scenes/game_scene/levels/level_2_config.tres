@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="LevelConfig" load_steps=2 format=3 uid="uid://c4jkixvq4fdgh"]
+
+[ext_resource type="Script" uid="uid://bv3gmwsjx0bbb" path="res://scripts/level_config.gd" id="1_ymt2m"]
+
+[resource]
+script = ExtResource("1_ymt2m")
+level_name = "Espionage on the Dance Floor"
+track_name = "Espionage on the Dance Floow"
+artist_name = "pyremonk"
+midi_file_path = "uid://drg7k0r54o0x7"
+audio_file_path = "uid://cyaqn5cfo7cey"
+next_level_path = "uid://c5h8rx4n3ytpb"
+metadata/_custom_type_script = "uid://bv3gmwsjx0bbb"

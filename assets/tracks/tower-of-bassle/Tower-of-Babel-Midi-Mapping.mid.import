@@ -1,0 +1,14 @@
+[remap]
+
+importer="com.nlaha.godotmidi"
+type="MidiResource"
+uid="uid://cwji4b1gxkewk"
+path="res://.godot/imported/Tower-of-Babel-Midi-Mapping.mid-2e958545c526fb3f2ea4cba1801df277.res"
+
+[deps]
+
+source_file="res://assets/tracks/tower-of-bassle/Tower-of-Babel-Midi-Mapping.mid"
+dest_files=["res://.godot/imported/Tower-of-Babel-Midi-Mapping.mid-2e958545c526fb3f2ea4cba1801df277.res"]
+
+[params]
+

@@ -94,6 +94,23 @@ func _on_viewport_resized() -> void:
 
 func _setup_rhythm_system() -> void:
 	"""Wire up all rhythm system components"""
+	# Apply timing parameters from level_config if available
+	if level_config != null:
+		if music_player:
+			music_player.default_bpm = level_config.default_bpm
+			music_player.audio_delay_ms = level_config.audio_delay_ms
+		if note_scheduler:
+			note_scheduler.lookahead_ms = level_config.lookahead_ms
+		if note_spawner:
+			note_spawner.spawn_lookahead_ms = level_config.spawn_lookahead_ms
+		print("GameplayBase: Applied level_config timing parameters:")
+		print("  BPM: %.1f, Audio Delay: %.0fms, Lookahead: %.0fms, Spawn Lookahead: %.0fms" % [
+			level_config.default_bpm,
+			level_config.audio_delay_ms,
+			level_config.lookahead_ms,
+			level_config.spawn_lookahead_ms
+		])
+	
 	# Connect NoteSpawner to scene nodes
 	note_spawner.spawn_points_container = spawn_points
 	note_spawner.note_targets = note_targets

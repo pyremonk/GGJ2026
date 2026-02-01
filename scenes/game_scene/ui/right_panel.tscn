@@ -50,7 +50,7 @@ layout_mode = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/MaskContainer"]
 layout_mode = 2
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 50
 
 [node name="Mask1Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer/MarginContainer"]
 unique_name_in_owner = true
@@ -62,7 +62,7 @@ stretch_mode = 5
 
 [node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/VBoxContainer/MaskContainer"]
 layout_mode = 2
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 50
 
 [node name="Mask2Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer/MarginContainer2"]
 unique_name_in_owner = true
@@ -74,7 +74,7 @@ stretch_mode = 5
 
 [node name="MarginContainer3" type="MarginContainer" parent="MarginContainer/VBoxContainer/MaskContainer"]
 layout_mode = 2
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 50
 
 [node name="Mask3Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer/MarginContainer3"]
 unique_name_in_owner = true
@@ -86,7 +86,7 @@ stretch_mode = 5
 
 [node name="MarginContainer4" type="MarginContainer" parent="MarginContainer/VBoxContainer/MaskContainer"]
 layout_mode = 2
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 50
 
 [node name="Mask4Icon" type="TextureRect" parent="MarginContainer/VBoxContainer/MaskContainer/MarginContainer4"]
 unique_name_in_owner = true

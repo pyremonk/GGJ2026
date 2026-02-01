@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://c5h8rx4n3ytpb"]
+[gd_scene load_steps=5 format=3 uid="uid://c5h8rx4n3ytpb"]
 
 [ext_resource type="Script" uid="uid://qi4qdfy4cte8" path="res://scenes/game_scene/levels/level.gd" id="1_level"]
 [ext_resource type="PackedScene" uid="uid://i7qyfwoyxj74" path="res://scenes/game_scene/gameplay_base.tscn" id="2_gameplay"]
-[ext_resource type="Script" path="res://scripts/gameplay/temp_gameplay_manager.gd" id="3_temp_manager"]
+[ext_resource type="Resource" uid="uid://lbnyri7v2io1" path="res://scenes/game_scene/levels/level_3_config.tres" id="3_jy8l7"]
+[ext_resource type="Script" uid="uid://bsam6d44nrinb" path="res://scripts/gameplay/temp_gameplay_manager.gd" id="3_temp_manager"]
 
 [node name="GameplayLevel3" type="Control"]
 layout_mode = 3
@@ -12,11 +13,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_level")
-next_level_path = ""
 
 [node name="GameplayBase" parent="." instance=ExtResource("2_gameplay")]
 unique_name_in_owner = true
 process_mode = 1
+level_config = ExtResource("3_jy8l7")
+next_level_path = "uid://cqy4b5x8dpw7m"
 
 [node name="TempGameplayManager" type="Node" parent="."]
 script = ExtResource("3_temp_manager")

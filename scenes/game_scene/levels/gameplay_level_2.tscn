@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bwcx7n2y5pmqr"]
+[gd_scene load_steps=5 format=3 uid="uid://bwcx7n2y5pmqr"]
 
 [ext_resource type="Script" uid="uid://qi4qdfy4cte8" path="res://scenes/game_scene/levels/level.gd" id="1_level"]
 [ext_resource type="PackedScene" uid="uid://i7qyfwoyxj74" path="res://scenes/game_scene/gameplay_base.tscn" id="2_gameplay"]
-[ext_resource type="Script" path="res://scripts/gameplay/temp_gameplay_manager.gd" id="3_temp_manager"]
+[ext_resource type="Resource" uid="uid://c4jkixvq4fdgh" path="res://scenes/game_scene/levels/level_2_config.tres" id="3_ajcke"]
+[ext_resource type="Script" uid="uid://bsam6d44nrinb" path="res://scripts/gameplay/temp_gameplay_manager.gd" id="3_temp_manager"]
 
 [node name="GameplayLevel2" type="Control"]
 layout_mode = 3
@@ -12,11 +13,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_level")
-next_level_path = "res://scenes/game_scene/levels/gameplay_level_3.tscn"
+next_level_path = "uid://c5h8rx4n3ytpb"
 
 [node name="GameplayBase" parent="." instance=ExtResource("2_gameplay")]
 unique_name_in_owner = true
 process_mode = 1
+test_midi_file = "uid://dr2m4wli715el"
+test_audio_file = "uid://b1h3mivv1u1qf"
+level_config = ExtResource("3_ajcke")
 
 [node name="TempGameplayManager" type="Node" parent="."]
 script = ExtResource("3_temp_manager")
