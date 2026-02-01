@@ -9,12 +9,12 @@ signal early_input_rejected(beat: BeatEvent, offset_ms: float)
 
 @export var latency_offset_ms: float = 0.0
 
-## Maps input action names to directions (inverted to match screen space)
+## Maps input action names to directions (direction = spawn side)
 const ACTION_TO_DIRECTION: Dictionary = {
-	"action_up": "down",
-	"action_down": "up",
-	"action_left": "right",
-	"action_right": "left"
+	"action_up": "up",
+	"action_down": "down",
+	"action_left": "left",
+	"action_right": "right"
 }
 
 var _note_scheduler: Node = null
