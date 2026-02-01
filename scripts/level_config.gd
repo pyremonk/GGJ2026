@@ -27,6 +27,11 @@ extends Resource
 ## Default: 0.25 (25% of notes missed = failure)
 @export_range(0.0, 1.0, 0.01) var miss_threshold_percentage: float = 0.25
 
+## Grace period: minimum notes that must be played before resonance depletion can occur
+## Prevents instant failure from missing the first few notes
+## Default: 8 notes
+@export_range(0, 50, 1) var grace_period_notes: int = 8
+
 ## Timing Configuration
 ## Default BPM for this level (used as fallback if MIDI tempo map is unavailable)
 @export_range(30.0, 300.0, 1.0) var default_bpm: float = 90.0

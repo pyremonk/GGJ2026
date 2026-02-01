@@ -34,6 +34,9 @@ var masks_collected: Array[bool] = [false, false, false, false]
 ## Reference to the level's configuration
 var level_config: LevelConfig = null
 
+## Default grace period (can be overridden by level_config)
+const DEFAULT_GRACE_PERIOD_NOTES: int = 8
+
 
 ## Initialize the state manager with note count and level config
 func initialize(note_count: int, config: LevelConfig = null) -> void:
@@ -126,14 +129,24 @@ func get_masks_collected_count() -> int:
 
 ## Check if resonance has depleted below failure threshold
 func _check_resonance() -> void:
-	if total_notes == 0:
+	var notes_played: int = hits + misses
+	if notes_played == 0:
 		return
+	
+	# Grace period: Don't check resonance until minimum notes have been played
+	var grace_period: int = DEFAULT_GRACE_PERIOD_NOTES
+	if level_config != null:
+		grace_period = level_config.grace_period_notes
+	
+	if notes_played < grace_period:
+		return  # Still in grace period
 	
 	var threshold: float = 0.25  # Default threshold
 	if level_config != null:
 		threshold = level_config.miss_threshold_percentage
 	
-	var miss_ratio: float = float(misses) / float(total_notes)
+	# Check against notes played so far, not total notes
+	var miss_ratio: float = float(misses) / float(notes_played)
 	if miss_ratio >= threshold:
 		resonance_depleted.emit()
 

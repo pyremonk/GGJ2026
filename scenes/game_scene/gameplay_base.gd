@@ -417,9 +417,14 @@ func _on_track_finished() -> void:
 
 func _on_resonance_depleted() -> void:
 	"""Handle level failure due to resonance depletion"""
+	if _track_finished:
+		return  # Already processed track completion
+	
+	_track_finished = true  # Prevent duplicate emissions
+	
 	print("GameplayBase: Resonance depleted - Level Failed!")
-	# TODO: Emit level_lost signal or transition to loss screen
 	music_player.stop_playback()
+	level_lost.emit()
 
 
 func get_spawn_point(note_name: String) -> Node2D:
