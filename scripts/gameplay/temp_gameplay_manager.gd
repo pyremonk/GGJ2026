@@ -70,9 +70,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel"):
 		# Toggle between paused and unpaused
 		if _pause_layer:
-			# Pause menu is open - close it and resume
+			# Pause menu is open - close it properly to unpause
 			_should_stay_paused = false
-			if _pause_layer.has_method("hide"):
+			var pause_menu: Node = _pause_layer.get_node_or_null("%PauseMenu")
+			if pause_menu and pause_menu.has_method("close"):
+				pause_menu.close()
+			else:
+				# Fallback if we can't find the pause menu
 				_pause_layer.hide()
 		else:
 			# No pause menu - open it and pause
