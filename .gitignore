@@ -26,3 +26,4 @@ Exports/
 
 # Plugin specific
 addons/script-ide/*
+~libgodotmidi.windows.template_debug.x86_64.dll
