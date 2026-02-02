@@ -96,7 +96,7 @@ func show() -> void:
 		_ignore_first_cancel = true
 
 func _refresh_exit_button() -> void:
-	exit_button.visible = !OS.has_feature("web")
+	exit_button.visible = false
 
 func _refresh_options_button() -> void:
 	pass

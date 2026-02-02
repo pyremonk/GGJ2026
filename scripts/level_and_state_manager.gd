@@ -18,7 +18,7 @@ func get_checkpoint_level_path() -> String:
 func _on_level_won(next_level_path: String = "") -> void:
 	"""Override to fade in menu music when level ends (win condition)"""
 	# Fade in menu music from stored position
-	MenuMusicManager.fade_in_menu_music(0.2)
+	MenuMusicManager.fade_in_menu_music(1.0)
 	
 	# Call parent implementation
 	super._on_level_won(next_level_path)
@@ -27,7 +27,7 @@ func _on_level_won(next_level_path: String = "") -> void:
 func _on_level_lost() -> void:
 	"""Override to fade in menu music when level ends (lose condition)"""
 	# Fade in menu music from stored position
-	MenuMusicManager.fade_in_menu_music(0.2)
+	MenuMusicManager.fade_in_menu_music(1.0)
 	
 	# Call parent implementation
 	super._on_level_lost()

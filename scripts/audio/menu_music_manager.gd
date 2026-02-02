@@ -47,6 +47,29 @@ func stop_menu_music() -> void:
 	_menu_music_player.stop()
 
 
+## Fade out menu music quickly then stop
+func fade_out_menu_music(duration: float = 0.5) -> void:
+	if _menu_music_player == null:
+		return
+	
+	if not _menu_music_player.playing:
+		return
+	
+	_should_be_playing = false
+	
+	# Fade out to silence
+	var tween: Tween = create_tween()
+	tween.tween_property(_menu_music_player, "volume_db", -80.0, duration)
+	await tween.finished
+	
+	# Store position and stop
+	_stored_position = _menu_music_player.get_playback_position()
+	_menu_music_player.stop()
+	
+	# Reset volume for next playback
+	_menu_music_player.volume_db = 0.0
+
+
 ## Fade in menu music from stored position
 func fade_in_menu_music(duration: float = 0.2) -> void:
 	if _menu_music_player == null:

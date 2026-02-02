@@ -52,12 +52,18 @@ var _has_approached_target: bool = false
 var _is_destroyed: bool = false  ## Prevents double-processing (hit + miss, etc.)
 
 @onready var _hit_sound_player: AudioStreamPlayer = AudioStreamPlayer.new()
+@onready var _miss_sound_player: AudioStreamPlayer = AudioStreamPlayer.new()
 
 func _ready() -> void:
 	# Set up hit sound player
 	_hit_sound_player.stream = load("res://assets/sfx/note_hit_sounds/Hit.ogg")
 	_hit_sound_player.bus = "SFX"
 	add_child(_hit_sound_player)
+	
+	# Set up miss sound player
+	_miss_sound_player.stream = load("res://assets/sfx/note_hit_sounds/Miss.ogg")
+	_miss_sound_player.bus = "SFX"
+	add_child(_miss_sound_player)
 
 func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: float, p_spawn_time_ms: float, p_midi_note: int, p_beat_number: int, p_direction: String, p_velocity: int = 0) -> void:
 	spawn_position = p_spawn_pos
@@ -186,6 +192,10 @@ func on_missed() -> void:
 	
 	_is_destroyed = true
 	_is_traveling = false
+	
+	# Play miss sound
+	if _miss_sound_player:
+		_miss_sound_player.play()
 	
 	# Get player position (center of gameplay area)
 	var player_pos: Vector2 = Vector2(960, 540)

@@ -238,8 +238,8 @@ func _start_test_level() -> void:
 	music_player.start_playback()
 	print("GameplayBase: Playback started!")
 	
-	# Stop menu music when level track starts
-	MenuMusicManager.stop_menu_music()
+	# Fade out menu music quickly when level track starts (1s fade)
+	MenuMusicManager.fade_out_menu_music(1.0)
 
 
 func _process(_delta: float) -> void:

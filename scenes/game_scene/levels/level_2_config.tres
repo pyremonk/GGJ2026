@@ -11,4 +11,5 @@ artist_name = "pyremonk"
 midi_resource = ExtResource("1_6yjvu")
 audio_file_path = "uid://cyaqn5cfo7cey"
 next_level_path = "uid://c5h8rx4n3ytpb"
+audio_delay_ms = 0.0
 metadata/_custom_type_script = "uid://bv3gmwsjx0bbb"
