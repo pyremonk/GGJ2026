@@ -10,6 +10,7 @@ const LEVEL_3_PATH: String = "res://scenes/game_scene/levels/gameplay_level_3.ts
 @onready var level_1_button: Button = %Level1Button
 @onready var level_2_button: Button = %Level2Button
 @onready var level_3_button: Button = %Level3Button
+@onready var exit_button: Button = %ExitButton
 @onready var background_music_player: AudioStreamPlayer = $BackgroundMusicPlayer
 
 
@@ -71,6 +72,8 @@ func _connect_buttons() -> void:
 		level_2_button.pressed.connect(_on_level_2_button_pressed)
 	if level_3_button:
 		level_3_button.pressed.connect(_on_level_3_button_pressed)
+	if exit_button:
+		exit_button.pressed.connect(_on_exit_button_pressed)
 
 
 func _on_level_1_button_pressed() -> void:
@@ -83,6 +86,11 @@ func _on_level_2_button_pressed() -> void:
 
 func _on_level_3_button_pressed() -> void:
 	SceneLoader.load_scene(LEVEL_3_PATH)
+
+
+func _on_exit_button_pressed() -> void:
+	"""Exit the game"""
+	get_tree().quit()
 
 
 func _register_menu_music() -> void:

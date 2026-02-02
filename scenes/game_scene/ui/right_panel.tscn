@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bcfmgljt3hfkr"]
+[gd_scene load_steps=9 format=3 uid="uid://bcfmgljt3hfkr"]
 
 [ext_resource type="Script" uid="uid://soj1wthjgkkv" path="res://scenes/game_scene/ui/right_panel.gd" id="1_right"]
 [ext_resource type="Texture2D" uid="uid://cwbq7m42r4050" path="res://assets/ui_labels/UI-Label_Veilshifts.png" id="2_veilshifts"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dbvufnud7w583" path="res://assets/masks/Mask-3.png" id="5_mask3"]
 [ext_resource type="Texture2D" uid="uid://drj4fmppco07p" path="res://assets/masks/Mask-4.png" id="6_mask4"]
 [ext_resource type="Texture2D" uid="uid://c4ifi8yp3yp3t" path="res://assets/ui_labels/UI-Label_Now-Playing.png" id="7_ytnuh"]
+[ext_resource type="PackedScene" uid="uid://dapwvxbmgjfpj" path="res://scenes/ui/master_volume_control.tscn" id="8_volume_control"]
 
 [node name="RightPanel" type="Control"]
 layout_mode = 3
@@ -150,3 +151,10 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_font_sizes/font_size = 18
 text = "0:00 / 0:00"
 horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="MasterVolumeControl" parent="MarginContainer/VBoxContainer/VBoxContainer" instance=ExtResource("8_volume_control")]
+layout_mode = 2

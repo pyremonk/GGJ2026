@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://cay7hrdwwhxcc"]
+[gd_scene load_steps=6 format=3 uid="uid://cay7hrdwwhxcc"]
 
 [ext_resource type="Script" uid="uid://pbuiek0iu0qt" path="res://scenes/temp_main_menu.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://ka12p3gbdunr" path="res://assets/game_icon/Night-at-the-Masquerade-Title.png" id="2_dot13"]
 [ext_resource type="FontFile" uid="uid://hctk0kjbbd1k" path="res://assets/fonts/FiraCode-Regular.ttf" id="3_jgys0"]
-[ext_resource type="AudioStream" path="res://assets/sfx/menu_music/MenuMusic.ogg" id="4_menu_music"]
+[ext_resource type="AudioStream" uid="uid://cyavd1bb2c7lu" path="res://assets/sfx/menu_music/MenuMusic.ogg" id="4_menu_music"]
+[ext_resource type="PackedScene" path="res://scenes/ui/master_volume_control.tscn" id="5_volume_control"]
 
 [node name="TempMainMenu" type="Control"]
 layout_mode = 3
@@ -91,3 +92,40 @@ horizontal_alignment = 1
 stream = ExtResource("4_menu_music")
 autoplay = true
 bus = &"Music"
+
+[node name="ExitMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+grow_vertical = 0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="ExitButton" type="Button" parent="ExitMargin"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_jgys0")
+theme_override_font_sizes/font_size = 20
+text = "Exit Game"
+
+[node name="VolumeMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -80.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="MasterVolumeControl" parent="VolumeMargin" instance=ExtResource("5_volume_control")]
+layout_mode = 2
+offset_right = 284.0
+offset_bottom = 40.0
