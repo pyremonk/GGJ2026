@@ -51,19 +51,13 @@ var _has_entered_75_percent: bool = false
 var _has_approached_target: bool = false
 var _is_destroyed: bool = false  ## Prevents double-processing (hit + miss, etc.)
 
-@onready var _hit_sound_player: AudioStreamPlayer = AudioStreamPlayer.new()
-@onready var _miss_sound_player: AudioStreamPlayer = AudioStreamPlayer.new()
+var _hit_sound: AudioStream
+var _miss_sound: AudioStream
 
 func _ready() -> void:
-	# Set up hit sound player
-	_hit_sound_player.stream = load("res://assets/sfx/note_hit_sounds/Hit.ogg")
-	_hit_sound_player.bus = "SFX"
-	add_child(_hit_sound_player)
-	
-	# Set up miss sound player
-	_miss_sound_player.stream = load("res://assets/sfx/note_hit_sounds/Miss.ogg")
-	_miss_sound_player.bus = "SFX"
-	add_child(_miss_sound_player)
+	# Pre-load sound files
+	_hit_sound = load("res://assets/sfx/note_hit_sounds/Hit.ogg")
+	_miss_sound = load("res://assets/sfx/note_hit_sounds/Miss.ogg")
 
 func initialize(p_spawn_pos: Vector2, p_target_pos: Vector2, p_arrival_time_ms: float, p_spawn_time_ms: float, p_midi_note: int, p_beat_number: int, p_direction: String, p_velocity: int = 0) -> void:
 	spawn_position = p_spawn_pos
@@ -160,9 +154,8 @@ func on_hit(rating: int) -> void:
 	_is_destroyed = true
 	_is_traveling = false
 	
-	# Play hit sound
-	if _hit_sound_player:
-		_hit_sound_player.play()
+	# Play hit sound (create one-shot player that survives note destruction)
+	_play_one_shot_sound(_hit_sound)
 	
 	# Play hit effect based on rating
 	var effect_color: Color = HitRating.get_rating_color(rating)
@@ -193,9 +186,8 @@ func on_missed() -> void:
 	_is_destroyed = true
 	_is_traveling = false
 	
-	# Play miss sound
-	if _miss_sound_player:
-		_miss_sound_player.play()
+	# Play miss sound (create one-shot player that survives note destruction)
+	_play_one_shot_sound(_miss_sound)
 	
 	# Get player position (center of gameplay area)
 	var player_pos: Vector2 = Vector2(960, 540)
@@ -249,6 +241,25 @@ func on_early_hit() -> void:
 	
 	# Destroy after animation
 	tween.chain().tween_callback(destroy)
+
+
+func _play_one_shot_sound(sound: AudioStream) -> void:
+	"""Create a one-shot audio player that auto-frees after playing"""
+	if not sound:
+		return
+	
+	var player: AudioStreamPlayer = AudioStreamPlayer.new()
+	player.stream = sound
+	player.bus = "SFX"
+	
+	# Add to the scene tree root so it persists when this note is freed
+	get_tree().root.add_child(player)
+	
+	# Auto-free when finished
+	player.finished.connect(func(): player.queue_free())
+	
+	# Play the sound
+	player.play()
 
 
 func destroy() -> void:
