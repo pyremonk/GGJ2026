@@ -22,7 +22,7 @@ Exports/
 .vscode/
 .idea/
 .DS_Store
-.code-workspace
+GGJ2026.code-workspace
 
 # Plugin specific
 addons/script-ide/*
