@@ -17,10 +17,10 @@ config/icon="uid://difcoxvjakqht"
 
 [autoload]
 
-AppConfig="*res://addons/maaacks_game_template/base/nodes/autoloads/app_config/app_config.tscn"
-SceneLoader="*res://addons/maaacks_game_template/base/nodes/autoloads/scene_loader/scene_loader.tscn"
-ProjectMusicController="*res://addons/maaacks_game_template/base/nodes/autoloads/music_controller/project_music_controller.tscn"
-ProjectUISoundController="*res://addons/maaacks_game_template/base/nodes/autoloads/ui_sound_controller/project_ui_sound_controller.tscn"
+AppConfig="*res://scenes/core/autoloads/app_config.tscn"
+SceneLoader="*res://scenes/core/autoloads/scene_loader.tscn"
+ProjectMusicController="*res://scenes/core/autoloads/project_music_controller.tscn"
+ProjectUISoundController="*res://scenes/core/autoloads/project_ui_sound_controller.tscn"
 MenuMusicManager="*res://scripts/audio/menu_music_manager.gd"
 
 [display]
@@ -31,7 +31,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_midi/plugin.cfg", "res://addons/maaacks_game_template/plugin.cfg")
+enabled=PackedStringArray("res://addons/godot_midi/plugin.cfg")
 
 [gui]
 
@@ -110,14 +110,7 @@ interact={
 
 [internationalization]
 
-locale/translations=PackedStringArray("res://addons/maaacks_game_template/base/translations/menus_translations.en.translation", "res://addons/maaacks_game_template/base/translations/menus_translations.fr.translation")
-
-[maaacks_game_template]
-
-copy_path="res://"
-disable_update_check=false
-disable_install_wizard=true
-disable_install_audio_busses=true
+locale/translations=PackedStringArray("res://resources/translations/menus_translations.en.translation", "res://resources/translations/menus_translations.fr.translation")
 
 [physics]
 
