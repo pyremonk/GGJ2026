@@ -17,7 +17,7 @@ extends OverlaidWindow
 @onready var main_menu_button = %MainMenuButton
 @onready var exit_button = %ExitButton
 
-var open_window : Node
+var _open_window : Node
 var _ignore_first_cancel : bool = false
 
 func get_main_menu_scene_path() -> String:
@@ -45,12 +45,12 @@ func close() -> void:
 	closed.emit()
 
 func close_window() -> void:
-	if open_window != null:
-		if open_window.has_method("close"):
-			open_window.close()
+	if _open_window != null:
+		if _open_window.has_method("close"):
+			_open_window.close()
 		else:
-			open_window.hide()
-		open_window = null
+			_open_window.hide()
+		_open_window = null
 
 func _disable_focus() -> void:
 	for child in %MenuButtons.get_children():
@@ -68,10 +68,10 @@ func _load_scene(scene_path: String) -> void:
 
 func _show_window(window : Control) -> void:
 	_disable_focus.call_deferred()
-	window.show()
-	open_window = window
+	window.open_window()
+	_open_window = window
 	await window.hidden
-	open_window = null
+	_open_window = null
 	_enable_focus.call_deferred()
 
 func _load_and_show_menu(scene : PackedScene) -> void:
@@ -85,13 +85,13 @@ func _handle_cancel_input() -> void:
 	if _ignore_first_cancel:
 		_ignore_first_cancel = false
 		return
-	if open_window != null:
+	if _open_window != null:
 		close_window()
 	else:
 		super._handle_cancel_input()
 
-func show() -> void:
-	super.show()
+func display_window() -> void:
+	super.open_window()
 	if Input.is_action_pressed("ui_cancel"):
 		_ignore_first_cancel = true
 

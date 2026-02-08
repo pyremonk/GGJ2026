@@ -1,6 +1,5 @@
-[gd_resource type="Resource" script_class="LevelConfig" load_steps=3 format=3 uid="uid://c4jkixvq4fdgh"]
+[gd_resource type="Resource" script_class="LevelConfig" load_steps=2 format=3 uid="uid://c4jkixvq4fdgh"]
 
-[ext_resource type="MidiResource" uid="uid://drg7k0r54o0x7" path="res://assets/tracks/espionage/Espionage on the Dance Floor MIDI Map.mid" id="1_6yjvu"]
 [ext_resource type="Script" uid="uid://bv3gmwsjx0bbb" path="res://scripts/level_config.gd" id="1_ymt2m"]
 
 [resource]
@@ -8,7 +7,7 @@ script = ExtResource("1_ymt2m")
 level_name = "Espionage on the Dance Floor"
 track_name = "Espionage on the Dance Floow"
 artist_name = "pyremonk"
-midi_resource = ExtResource("1_6yjvu")
+beat_chart_path = "res://assets/tracks/espionage/Espionage on the Dance Floor MIDI Map.beats.json"
 audio_file_path = "uid://cyaqn5cfo7cey"
 next_level_path = "uid://c5h8rx4n3ytpb"
 audio_delay_ms = 0.0

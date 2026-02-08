@@ -24,7 +24,7 @@ const FLYING_BEAT_INDICATOR_SCRIPT: String = "res://scripts/ui/FlyingBeatIndicat
 @onready var lookahead_label: Label = %LookaheadLabel
 
 @onready var audio_file_button: Button = %AudioFileButton
-@onready var midi_file_button: Button = %MIDIFileButton
+@onready var beat_chart_button: Button = %BeatChartButton
 @onready var subdivision_option: OptionButton = %SubdivisionOption
 @onready var start_button: Button = %StartButton
 @onready var calibrate_button: Button = %CalibrateButton
@@ -39,10 +39,10 @@ const FLYING_BEAT_INDICATOR_SCRIPT: String = "res://scripts/ui/FlyingBeatIndicat
 @onready var result_label: Label = %ResultLabel
 
 @onready var audio_file_dialog: FileDialog = %AudioFileDialog
-@onready var midi_file_dialog: FileDialog = %MIDIFileDialog
+@onready var beat_chart_dialog: FileDialog = %BeatChartDialog
 
 var _audio_stream: AudioStream = null
-var _midi_resource: Resource = null
+var _beat_chart_path: String = ""
 var _is_playing: bool = false
 var _total_beats_rendered: int = 0
 var _total_beats_in_song: int = 0
@@ -69,7 +69,7 @@ func _connect_signals() -> void:
 	latency_calibration.calibration_complete.connect(_on_calibration_complete)
 	
 	audio_file_button.pressed.connect(_on_audio_file_button_pressed)
-	midi_file_button.pressed.connect(_on_midi_file_button_pressed)
+	beat_chart_button.pressed.connect(_on_beat_chart_button_pressed)
 	start_button.pressed.connect(_on_start_button_pressed)
 	calibrate_button.pressed.connect(_on_calibrate_button_pressed)
 	delay_decrease_button.pressed.connect(_on_delay_decrease_pressed)
@@ -78,7 +78,7 @@ func _connect_signals() -> void:
 	lookahead_increase_button.pressed.connect(_on_lookahead_increase_pressed)
 	
 	audio_file_dialog.file_selected.connect(_on_audio_file_selected)
-	midi_file_dialog.file_selected.connect(_on_midi_file_selected)
+	beat_chart_dialog.file_selected.connect(_on_beat_chart_selected)
 
 func _setup_ui() -> void:
 	subdivision_option.clear()
@@ -99,27 +99,26 @@ func _setup_ui() -> void:
 
 func _load_default_files() -> void:
 	var default_audio_path: String = "res://assets/testing_track/Testing_Track.ogg"
-	var default_midi_path: String = "res://assets/testing_track/Testing_Track.mid"
+	var default_beat_chart_path: String = "res://assets/testing_track/Testing_Track.beats.json"
 	
 	if FileAccess.file_exists(default_audio_path):
 		_audio_stream = load(default_audio_path)
 		audio_file_button.text = "Audio: Testing_Track.ogg"
 	
-	if FileAccess.file_exists(default_midi_path):
-		_midi_resource = load(default_midi_path)
-		if _midi_resource:
-			midi_file_button.text = "MIDI: Testing_Track.mid"
+	if FileAccess.file_exists(default_beat_chart_path):
+		_beat_chart_path = default_beat_chart_path
+		beat_chart_button.text = "Beat Chart: Testing_Track.beats.json"
 	
 	_check_files_ready()
 
 func _check_files_ready() -> void:
-	start_button.disabled = (_audio_stream == null or _midi_resource == null)
+	start_button.disabled = (_audio_stream == null or _beat_chart_path.is_empty())
 
 func _on_audio_file_button_pressed() -> void:
 	audio_file_dialog.popup_centered()
 
-func _on_midi_file_button_pressed() -> void:
-	midi_file_dialog.popup_centered()
+func _on_beat_chart_button_pressed() -> void:
+	beat_chart_dialog.popup_centered()
 
 func _on_audio_file_selected(path: String) -> void:
 	_audio_stream = load(path)
@@ -130,13 +129,13 @@ func _on_audio_file_selected(path: String) -> void:
 		audio_file_button.text = "Audio: ERROR"
 	_check_files_ready()
 
-func _on_midi_file_selected(path: String) -> void:
-	_midi_resource = load(path)
-	if _midi_resource:
+func _on_beat_chart_selected(path: String) -> void:
+	if FileAccess.file_exists(path):
+		_beat_chart_path = path
 		var filename: String = path.get_file()
-		midi_file_button.text = "MIDI: " + filename
+		beat_chart_button.text = "Beat Chart: " + filename
 	else:
-		midi_file_button.text = "MIDI: ERROR"
+		beat_chart_button.text = "Beat Chart: ERROR"
 	_check_files_ready()
 
 func _on_start_button_pressed() -> void:
@@ -146,8 +145,8 @@ func _on_start_button_pressed() -> void:
 		_start_playback()
 
 func _start_playback() -> void:
-	if not music_player.load_files(_audio_stream, _midi_resource):
-		push_error("RhythmTest: Failed to load files")
+	if not music_player.load_files(_audio_stream):
+		push_error("RhythmTest: Failed to load audio file")
 		return
 	
 	var selected_subdivision: int = subdivision_option.get_item_id(subdivision_option.selected)
@@ -156,13 +155,8 @@ func _start_playback() -> void:
 	print("=== Starting Playback ===")
 	print("Beat subdivision: ", selected_subdivision)
 	
-	var tempo_map: Array = music_player.get_tempo_map()
-	print("Tempo map received: ", tempo_map)
-	
-	var midi_resource: Resource = music_player.get_midi_resource()
-	print("MIDI resource: ", midi_resource)
-	
-	midi_router.load_midi_data(midi_resource, tempo_map)
+	# Load beat chart
+	midi_router.load_beat_chart(_beat_chart_path)
 	var beat_events: Array[BeatEvent] = midi_router.generate_beat_events()
 	
 	print("Beat events generated: ", beat_events.size())

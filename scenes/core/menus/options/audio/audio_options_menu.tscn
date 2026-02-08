@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://c8vnncjwqcpab"]
 
-[ext_resource type="Script" uid="uid://bwugqn2cjr41e" path="res://scenes/core/menus/options_menu/audio/audio_options_menu.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://cl416gdb1fgwr" path="res://scenes/core/menus/options_menu/option_control/slider_option_control.tscn" id="2_raehj"]
+[ext_resource type="Script" uid="uid://bwugqn2cjr41e" path="res://scenes/core/menus/options/audio/audio_options_menu.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://cl416gdb1fgwr" path="res://scenes/core/menus/options/option_control/slider_option_control.tscn" id="2_raehj"]
 [ext_resource type="Script" uid="uid://1nf36h0gms3q" path="res://scripts/core/utilities/capture_focus.gd" id="3_dtraq"]
-[ext_resource type="PackedScene" uid="uid://bsxh6v7j0257h" path="res://scenes/core/menus/options_menu/option_control/toggle_option_control.tscn" id="4_ojfec"]
+[ext_resource type="PackedScene" uid="uid://bsxh6v7j0257h" path="res://scenes/core/menus/options/option_control/toggle_option_control.tscn" id="4_ojfec"]
 
 [node name="Audio" type="MarginContainer"]
 custom_minimum_size = Vector2(305, 0)

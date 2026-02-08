@@ -7,7 +7,12 @@ func _on_pause_menu_hidden():
 
 func _on_visibility_changed():
 	if visible:
-		pause_menu.show()
+		if pause_menu.has_method("display_window"):
+			pause_menu.display_window()
+		elif pause_menu.has_method("open_window"):
+			pause_menu.open_window()
+		else:
+			pause_menu.show()
 
 func _ready():
 	visibility_changed.connect(_on_visibility_changed)

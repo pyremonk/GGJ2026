@@ -51,7 +51,7 @@ func _open_key_assignment_window(action_name : String, readable_input_name : Str
 	$KeyAssignmentWindow.title = tr("Assign Key for {action}").format({action = action_name})
 	$KeyAssignmentWindow.text = readable_input_name
 	$KeyAssignmentWindow.confirm_button.disabled = true
-	$KeyAssignmentWindow.show()
+	$KeyAssignmentWindow.open_window()
 
 func _on_input_actions_tree_add_button_clicked(action_name) -> void:
 	_open_key_assignment_window(action_name)

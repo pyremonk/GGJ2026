@@ -1,12 +1,12 @@
 extends Node
 
-## Parses MIDI data and generates beat events for gameplay.
-## Supports hybrid approach: authored notes from MIDI track or auto-generated from tempo.
+## Loads pre-generated beat chart data from JSON files for gameplay.
+## Supports hybrid approach: authored notes from beat chart or auto-generated from tempo.
 
 signal beat_event(beat: BeatEvent)
 
 @export var beat_subdivision: int = 4
-@export var target_track_index: int = 1
+@export var default_bpm: float = 120.0
 
 ## Maps MIDI notes to directions (direction = spawn side = input key = feedback location)
 ## Note movement direction is purely visual - gameplay uses spawn side for all logic
@@ -25,35 +25,40 @@ const TARGET_MAPPING: Dictionary = {
 	71: "down"     # B4 - spawns BOTTOM, player presses DOWN
 }
 
-var _midi_resource: Resource = null
-var _tempo_map: Array = []
+var _beat_chart: BeatChart = null
 var _beat_events: Array[BeatEvent] = []
 var _beats_generated: bool = false
 
-func load_midi_data(midi_resource: Resource, tempo_map: Array) -> void:
-	if midi_resource == null:
-		push_error("MIDIEventRouter: Cannot load null MIDI resource")
+func load_beat_chart(beat_chart_path: String) -> void:
+	if beat_chart_path.is_empty():
+		push_error("MIDIEventRouter: Beat chart path is empty")
 		return
 	
-	_midi_resource = midi_resource
-	_tempo_map = tempo_map
+	_beat_chart = BeatChart.load_from_file(beat_chart_path)
+	if _beat_chart == null:
+		push_error("MIDIEventRouter: Failed to load beat chart from: %s" % beat_chart_path)
+		return
+	
+	print("MIDIEventRouter: Loaded beat chart from %s" % beat_chart_path)
+	print("  Total beats: %d" % _beat_chart.beat_events.size())
+	print("  Tempo changes: %d" % _beat_chart.tempo_map.size())
+	
 	_beats_generated = false
 
 func generate_beat_events() -> Array[BeatEvent]:
-	if _midi_resource == null:
-		push_error("MIDIEventRouter: No MIDI resource loaded")
+	if _beat_chart == null:
+		push_error("MIDIEventRouter: No beat chart loaded")
 		return []
 	
 	if _beats_generated:
 		return _beat_events
 	
-	print("MIDIEventRouter: Checking for authored beats in track ", target_track_index)
-	var has_notes: bool = _check_track_has_notes(target_track_index)
-	print("  Track has notes: ", has_notes)
+	# Check if beat chart has authored notes
+	var has_notes: bool = not _beat_chart.beat_events.is_empty()
 	
 	if has_notes:
-		print("MIDIEventRouter: Using authored notes from MIDI track")
-		_beat_events = _generate_beats_from_notes()
+		print("MIDIEventRouter: Using authored notes from beat chart")
+		_beat_events = _load_beats_from_chart()
 	else:
 		print("MIDIEventRouter: Using auto-generated beats from tempo")
 		_beat_events = _generate_beats_from_tempo()
@@ -61,154 +66,64 @@ func generate_beat_events() -> Array[BeatEvent]:
 	_beats_generated = true
 	return _beat_events
 
-func _check_track_has_notes(track_index: int) -> bool:
-	if _midi_resource == null:
-		return false
-	
-	if "tracks" in _midi_resource:
-		var tracks = _midi_resource.tracks
-		if tracks is Array and track_index < tracks.size():
-			var track = tracks[track_index]
-			if track is Array:
-				return track.size() > 0
-			elif "events" in track:
-				var events = track.events
-				if events is Array:
-					return events.size() > 0
-	
-	if "get_track_count" in _midi_resource:
-		var track_count: int = _midi_resource.get_track_count()
-		if track_index >= track_count:
-			return false
-		
-		if "get_track_events" in _midi_resource:
-			var events = _midi_resource.get_track_events(track_index)
-			if events is Array:
-				return events.size() > 0
-	
-	return false
-
-func _generate_beats_from_notes() -> Array[BeatEvent]:
+func _load_beats_from_chart() -> Array[BeatEvent]:
 	var beats: Array[BeatEvent] = []
 	
-	if _midi_resource == null:
+	if _beat_chart == null or _beat_chart.beat_events.is_empty():
 		return beats
 	
-	print("MIDIEventRouter: Parsing notes from track ", target_track_index)
+	print("MIDIEventRouter: Loading %d beats from chart" % _beat_chart.beat_events.size())
 	
-	var track_events: Array = []
-	
-	if "tracks" in _midi_resource:
-		var tracks = _midi_resource.tracks
-		print("  Found 'tracks' property, size: ", tracks.size() if tracks is Array else "not an array")
-		if tracks is Array and target_track_index < tracks.size():
-			var track = tracks[target_track_index]
-			if track is Array:
-				track_events = track
-				print("  Track is Array, events: ", track_events.size())
-			elif "events" in track:
-				track_events = track.events
-				print("  Track has 'events' property, events: ", track_events.size())
-	elif "get_track_events" in _midi_resource:
-		track_events = _midi_resource.get_track_events(target_track_index)
-		print("  Used get_track_events(), events: ", track_events.size())
-	
-	print("  Total events to process: ", track_events.size())
-	
-	var beat_number: int = 0
-	var accumulated_ticks: float = 0.0
-	var last_note_on_tick: float = -1000.0  # Track last accepted note to avoid duplicates
-	
-	for event in track_events:
-		if event == null:
+	# Convert dictionary data to BeatEvent objects
+	for event_data in _beat_chart.beat_events:
+		if not event_data is Dictionary:
 			continue
 		
-		if not event is Dictionary:
-			continue
+		var hit_time_ms: float = event_data.get("hit_time_ms", 0.0)
+		var beat_number: int = event_data.get("beat_number", 0)
+		var midi_note: int = event_data.get("midi_note", -1)
+		var direction: String = event_data.get("direction", "down")
+		var velocity: int = event_data.get("velocity", 64)
 		
-		# Accumulate delta time to get absolute position
-		var delta: float = event.get("delta", 0.0)
-		accumulated_ticks += delta
-		
-		# Check if this is a note-on event
-		var event_type: String = event.get("type", "")
-		var subtype_value = event.get("subtype", -1)
-		var velocity_value = event.get("data", 0)
-		var note_value = event.get("note", -1)  # MIDI note pitch
-		
-		var subtype: int = int(subtype_value) if subtype_value is String else subtype_value
-		var velocity: int = int(velocity_value) if velocity_value is String else velocity_value
-		var note_pitch: int = int(note_value) if note_value is String else note_value
-		
-		# Debug: Print all note events
-		if event_type == "note":
-			print("  Note event: subtype=%d, velocity=%d, note=%d, delta=%.0f, accum_ticks=%.0f" % [subtype, velocity, note_pitch, delta, accumulated_ticks])
-		
-		# Note-on: type="note" AND subtype=9 AND velocity > 0
-		var is_note_on: bool = (event_type == "note" and subtype == 9 and velocity > 0)
-		
-		if is_note_on:
-			# Skip duplicate notes at the same tick (within 10 ticks tolerance)
-			if abs(accumulated_ticks - last_note_on_tick) < 10:
-				print("    -> Note-on SKIPPED (duplicate at same tick)")
-				continue
-			
-			var time_ms: float = _ticks_to_ms(int(accumulated_ticks))
-			print("    -> Note-on ACCEPTED at tick %.0f (%.0fms), note=%d, velocity=%d" % [accumulated_ticks, time_ms, note_pitch, velocity])
-			var direction: String = TARGET_MAPPING.get(note_pitch, "down")
-			var beat: BeatEvent = BeatEvent.new(time_ms, beat_number, note_pitch, direction, velocity)
-			beats.append(beat)
-			beat_number += 1
-			last_note_on_tick = accumulated_ticks
+		var beat: BeatEvent = BeatEvent.new(hit_time_ms, beat_number, midi_note, direction, velocity)
+		beats.append(beat)
 	
-	print("  Found %d note-on events" % beats.size())
-	
+	print("  Loaded %d beat events" % beats.size())
 	return beats
 
 func _generate_beats_from_tempo() -> Array[BeatEvent]:
 	var beats: Array[BeatEvent] = []
 	
-	if _tempo_map.is_empty():
-		push_error("MIDIEventRouter: Cannot generate beats - tempo map is empty")
+	var tempo_map: Array[Dictionary] = []
+	if _beat_chart and not _beat_chart.tempo_map.is_empty():
+		tempo_map = _beat_chart.tempo_map
+	else:
+		# Create default tempo if no tempo map available
+		tempo_map.append({
+			"time_ms": 0.0,
+			"bpm": default_bpm,
+			"ppq": 480
+		})
+	
+	if tempo_map.is_empty():
+		push_error("MIDIEventRouter: Cannot generate beats - no tempo data available")
 		return beats
 	
 	print("MIDIEventRouter: Generating beats from tempo map")
-	print("  Tempo map size: ", _tempo_map.size())
+	print("  Tempo map size: ", tempo_map.size())
 	print("  Beat subdivision: ", beat_subdivision)
 	
-	var ppq: int = 480
-	if "ppq" in _midi_resource:
-		ppq = _midi_resource.ppq
-	elif "ticks_per_beat" in _midi_resource:
-		ppq = _midi_resource.ticks_per_beat
-	elif "get_ppq" in _midi_resource:
-		ppq = _midi_resource.get_ppq()
-	
 	var song_length_ms: float = _estimate_song_length_ms()
-	
 	var current_time_ms: float = 0.0
 	var beat_number: int = 0
 	var tempo_index: int = 0
 	
-	var current_tempo_bpm: float = 120.0
+	var current_tempo_bpm: float = tempo_map[0].get("bpm", default_bpm)
 	var next_tempo_change_ms: float = song_length_ms + 1.0
 	
-	if _tempo_map.size() > 0:
-		var first_tempo = _tempo_map[0]
-		if first_tempo is Dictionary:
-			current_tempo_bpm = first_tempo.get("bpm", 120.0)
-		elif "bpm" in first_tempo:
-			current_tempo_bpm = first_tempo.bpm
-		
-		if _tempo_map.size() > 1:
-			var second_tempo = _tempo_map[1]
-			var second_tick: int = 0
-			if second_tempo is Dictionary:
-				second_tick = second_tempo.get("tick", 0)
-			elif "tick" in second_tempo:
-				second_tick = second_tempo.tick
-			next_tempo_change_ms = _ticks_to_ms(second_tick)
-			tempo_index = 1
+	if tempo_map.size() > 1:
+		next_tempo_change_ms = tempo_map[1].get("time_ms", song_length_ms + 1.0)
+		tempo_index = 1
 	
 	var ms_per_quarter_note: float = 60000.0 / current_tempo_bpm
 	var ms_per_beat: float = ms_per_quarter_note * (4.0 / beat_subdivision)
@@ -218,25 +133,17 @@ func _generate_beats_from_tempo() -> Array[BeatEvent]:
 	print("  MS per beat: %.2f ms" % ms_per_beat)
 	
 	while current_time_ms < song_length_ms:
-		if current_time_ms >= next_tempo_change_ms and tempo_index < _tempo_map.size():
-			var tempo_event = _tempo_map[tempo_index]
-			if tempo_event is Dictionary:
-				current_tempo_bpm = tempo_event.get("bpm", current_tempo_bpm)
-			elif "bpm" in tempo_event:
-				current_tempo_bpm = tempo_event.bpm
+		# Check for tempo changes
+		if current_time_ms >= next_tempo_change_ms and tempo_index < tempo_map.size():
+			var tempo_event: Dictionary = tempo_map[tempo_index]
+			current_tempo_bpm = tempo_event.get("bpm", current_tempo_bpm)
 			
 			ms_per_quarter_note = 60000.0 / current_tempo_bpm
 			ms_per_beat = ms_per_quarter_note * (4.0 / beat_subdivision)
 			
 			tempo_index += 1
-			if tempo_index < _tempo_map.size():
-				var next_tempo = _tempo_map[tempo_index]
-				var next_tick: int = 0
-				if next_tempo is Dictionary:
-					next_tick = next_tempo.get("tick", 0)
-				elif "tick" in next_tempo:
-					next_tick = next_tempo.tick
-				next_tempo_change_ms = _ticks_to_ms(next_tick)
+			if tempo_index < tempo_map.size():
+				next_tempo_change_ms = tempo_map[tempo_index].get("time_ms", song_length_ms + 1.0)
 			else:
 				next_tempo_change_ms = song_length_ms + 1.0
 		
@@ -251,78 +158,26 @@ func _generate_beats_from_tempo() -> Array[BeatEvent]:
 	
 	return beats
 
-func _ticks_to_ms(ticks: int) -> float:
-	if _midi_resource == null:
-		return 0.0
-	
-	if "ticks_to_ms" in _midi_resource:
-		return _midi_resource.ticks_to_ms(ticks)
-	
-	var ppq: int = 480
-	if "ppq" in _midi_resource:
-		ppq = _midi_resource.ppq
-	elif "ticks_per_beat" in _midi_resource:
-		ppq = _midi_resource.ticks_per_beat
-	
-	if _tempo_map.is_empty():
-		var default_bpm: float = 120.0
-		var ms_per_quarter_note: float = 60000.0 / default_bpm
-		return (ticks / float(ppq)) * ms_per_quarter_note
-	
-	var accumulated_time_ms: float = 0.0
-	var accumulated_ticks: int = 0
-	
-	for i in range(_tempo_map.size()):
-		var tempo_event = _tempo_map[i]
-		var tempo_tick: int = 0
-		var tempo_bpm: float = 120.0
-		
-		if tempo_event is Dictionary:
-			tempo_tick = tempo_event.get("tick", 0)
-			tempo_bpm = tempo_event.get("bpm", 120.0)
-		elif "tick" in tempo_event and "bpm" in tempo_event:
-			tempo_tick = tempo_event.tick
-			tempo_bpm = tempo_event.bpm
-		
-		if tempo_tick > ticks:
-			var ticks_in_this_section: int = ticks - accumulated_ticks
-			var ms_per_quarter_note: float = 60000.0 / tempo_bpm
-			var ms_per_tick: float = ms_per_quarter_note / ppq
-			accumulated_time_ms += ticks_in_this_section * ms_per_tick
-			break
-		
-		if i < _tempo_map.size() - 1:
-			var next_tempo = _tempo_map[i + 1]
-			var next_tick: int = 0
-			if next_tempo is Dictionary:
-				next_tick = next_tempo.get("tick", 0)
-			elif "tick" in next_tempo:
-				next_tick = next_tempo.tick
-			
-			var ticks_in_this_section: int = min(next_tick, ticks) - tempo_tick
-			var ms_per_quarter_note: float = 60000.0 / tempo_bpm
-			var ms_per_tick: float = ms_per_quarter_note / ppq
-			accumulated_time_ms += ticks_in_this_section * ms_per_tick
-			accumulated_ticks = next_tick
-		else:
-			var ticks_in_this_section: int = ticks - tempo_tick
-			var ms_per_quarter_note: float = 60000.0 / tempo_bpm
-			var ms_per_tick: float = ms_per_quarter_note / ppq
-			accumulated_time_ms += ticks_in_this_section * ms_per_tick
-	
-	return accumulated_time_ms
-
 func _estimate_song_length_ms() -> float:
 	const DEFAULT_LENGTH_MS: float = 120000.0
 	
-	if _midi_resource == null:
+	if _beat_chart == null:
 		return DEFAULT_LENGTH_MS
 	
-	if "length_ms" in _midi_resource:
-		return _midi_resource.length_ms
-	elif "get_length_ms" in _midi_resource:
-		return _midi_resource.get_length_ms()
+	# Try to get from metadata (ignore if 0)
+	if _beat_chart.metadata.has("duration_ms"):
+		var duration: float = _beat_chart.metadata.get("duration_ms", 0.0)
+		if duration > 0.0:
+			return duration
 	
+	# Try to get from last beat event
+	if not _beat_chart.beat_events.is_empty():
+		var last_beat: Dictionary = _beat_chart.beat_events[-1]
+		var last_time: float = last_beat.get("hit_time_ms", 0.0)
+		if last_time > 0.0:
+			return last_time + 5000.0  # Add 5 seconds buffer
+	
+	# Fallback to default
 	return DEFAULT_LENGTH_MS
 
 func emit_all_beat_events() -> void:

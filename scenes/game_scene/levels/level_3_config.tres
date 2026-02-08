@@ -1,6 +1,5 @@
-[gd_resource type="Resource" script_class="LevelConfig" load_steps=3 format=3 uid="uid://lbnyri7v2io1"]
+[gd_resource type="Resource" script_class="LevelConfig" load_steps=2 format=3 uid="uid://lbnyri7v2io1"]
 
-[ext_resource type="MidiResource" uid="uid://cwji4b1gxkewk" path="res://assets/tracks/tower-of-bassle/Tower-of-Babel-Midi-Mapping.mid" id="1_7wj8n"]
 [ext_resource type="Script" uid="uid://bv3gmwsjx0bbb" path="res://scripts/level_config.gd" id="1_joyga"]
 
 [resource]
@@ -8,7 +7,7 @@ script = ExtResource("1_joyga")
 level_name = "Tower of Babel"
 track_name = "Tower of Bass"
 artist_name = "pyremonk"
-midi_resource = ExtResource("1_7wj8n")
+beat_chart_path = "res://assets/tracks/tower-of-bassle/Tower-of-Babel-Midi-Mapping.beats.json"
 audio_file_path = "uid://dcu5cgsfp1mlu"
 next_level_path = "uid://cqy4b5x8dpw7m"
 default_bpm = 110.0

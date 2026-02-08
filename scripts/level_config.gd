@@ -13,9 +13,9 @@ extends Resource
 ## Artist or creator of the track (displayed in Now Playing UI)
 @export var artist_name: String = ""
 
-## MIDI resource for this level (imported .mid file)
-## Drag the .mid file from FileSystem into this field in the Inspector
-@export var midi_resource: Resource = null
+## Beat chart JSON file path for this level (generated from MIDI)
+## Specify the path to the .beats.json file (e.g., "res://assets/tracks/track_name.beats.json")
+@export_file("*.beats.json") var beat_chart_path: String = ""
 
 ## Path to the audio file for this level (relative to res://)
 @export_file("*.ogg", "*.mp3", "*.wav") var audio_file_path: String = ""
@@ -58,8 +58,8 @@ func is_valid() -> bool:
 	if track_name.is_empty():
 		push_warning("LevelConfig: track_name is empty")
 		return false
-	if midi_resource == null:
-		push_warning("LevelConfig: midi_resource is null")
+	if beat_chart_path.is_empty():
+		push_warning("LevelConfig: beat_chart_path is empty")
 		return false
 	if audio_file_path.is_empty():
 		push_warning("LevelConfig: audio_file_path is empty")

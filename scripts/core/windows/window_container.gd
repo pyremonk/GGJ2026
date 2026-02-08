@@ -1,4 +1,3 @@
-@tool
 class_name WindowContainer
 extends PanelContainer
 
@@ -71,8 +70,8 @@ func _unhandled_input(event : InputEvent) -> void:
 func _on_close_button_pressed() -> void:
 	close()
 
-func show() -> void:
-	super.show()
+func open_window() -> void:
+	show()
 	opened.emit()
 
 func _exit_tree():

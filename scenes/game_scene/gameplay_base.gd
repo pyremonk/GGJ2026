@@ -37,8 +37,8 @@ const VEILSHIFT_VELOCITY_TO_MASK: Dictionary = {
 	99: 3   # Player-Mask-4 -> mask_index 3
 }
 
-# Test MIDI/Audio files
-@export_file("*.mid") var test_midi_file: String = "res://assets/testing_track/Testing_Track.mid"
+# Test beat chart/Audio files
+@export_file("*.beats.json") var test_beat_chart: String = "res://assets/testing_track/Testing_Track.beats.json"
 @export_file("*.ogg") var test_audio_file: String = "res://assets/testing_track/Testing_Track.ogg"
 
 # Level configuration
@@ -159,30 +159,28 @@ func _on_player_input_for_effects(action_name: String, _input_time_ms: float) ->
 
 
 func _start_test_level() -> void:
-	"""Load and start MIDI/audio from level_config or test files"""
-	var midi_resource: Resource = null
+	"""Load and start beat chart/audio from level_config or test files"""
+	var beat_chart_file: String = ""
 	var audio_file: String = ""
 	
 	# Prioritize level_config over test files
 	if level_config != null:
-		midi_resource = level_config.midi_resource
+		beat_chart_file = level_config.beat_chart_path
 		audio_file = level_config.audio_file_path
 		print("GameplayBase: Loading from level_config...")
 		print("  Level: ", level_config.level_name)
 		print("  Track: ", level_config.track_name)
 		print("  Artist: ", level_config.artist_name)
 	else:
-		# For test files, load the MIDI as a resource
-		if not test_midi_file.is_empty():
-			midi_resource = load(test_midi_file)
+		beat_chart_file = test_beat_chart
 		audio_file = test_audio_file
 		print("GameplayBase: Loading test level...")
 	
-	if midi_resource == null or audio_file.is_empty():
-		push_warning("No MIDI/audio files configured. Set level_config or test files.")
+	if beat_chart_file.is_empty() or audio_file.is_empty():
+		push_warning("No beat chart/audio files configured. Set level_config or test files.")
 		return
 	
-	print("  MIDI: ", midi_resource)
+	print("  Beat Chart: ", beat_chart_file)
 	print("  Audio: ", audio_file)
 	
 	# Load audio stream
@@ -191,30 +189,26 @@ func _start_test_level() -> void:
 		push_error("Failed to load audio: " + audio_file)
 		return
 	
-	# Load files
-	var success: bool = music_player.load_files(audio_stream, midi_resource)
+	# Load audio file
+	var success: bool = music_player.load_files(audio_stream)
 	if not success:
-		push_error("Failed to load MIDI/audio files")
+		push_error("Failed to load audio file")
 		return
 	
-	# Generate beat events
-	var loaded_midi_resource: Resource = music_player.get_midi_resource()
-	var tempo_map: Array = music_player.get_tempo_map()
+	# Load beat chart and generate beat events
+	midi_event_router.load_beat_chart(beat_chart_file)
+	var beat_events: Array = midi_event_router.generate_beat_events()
+	_total_beats = beat_events.size()
 	
-	if loaded_midi_resource and tempo_map:
-		midi_event_router.load_midi_data(loaded_midi_resource, tempo_map)
-		var beat_events: Array = midi_event_router.generate_beat_events()
-		_total_beats = beat_events.size()
-		
-		note_scheduler.initialize(beat_events)
-		
-		print("GameplayBase: Loaded %d beat events" % beat_events.size())
-		
-		# Initialize UIStateManager with total note count
-		if ui_state_manager:
-			ui_state_manager.initialize(beat_events.size(), level_config)
-		
-# Initialize Right UI with track info
+	note_scheduler.initialize(beat_events)
+	
+	print("GameplayBase: Loaded %d beat events" % beat_events.size())
+	
+	# Initialize UIStateManager with total note count
+	if ui_state_manager:
+		ui_state_manager.initialize(beat_events.size(), level_config)
+	
+	# Initialize Right UI with track info
 	if right_ui:
 		var track_name: String = "Track Name"
 		var artist_name: String = "Artist"

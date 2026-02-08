@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dgravx3vt5g3i"]
 
 [ext_resource type="PackedScene" uid="uid://cwt4p3bufkke5" path="res://scenes/core/windows/confirmation_overlaid_window.tscn" id="1_6c67a"]
-[ext_resource type="Script" uid="uid://custha7r0uoic" path="res://scenes/core/menus/options_menu/input/key_assignment_window.gd" id="2_oif0q"]
+[ext_resource type="Script" uid="uid://custha7r0uoic" path="res://scenes/core/menus/options/input/key_assignment_window.gd" id="2_oif0q"]
 
 [node name="KeyAssignmentWindow" instance=ExtResource("1_6c67a")]
 custom_minimum_size = Vector2(420, 200)

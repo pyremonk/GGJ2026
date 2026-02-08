@@ -1,6 +1,6 @@
 extends Node
 
-## Manages synchronized playback of audio and MIDI files.
+## Manages synchronized playback of audio files.
 ## Provides timing information and emits signals for playback state changes.
 
 signal playback_started
@@ -14,7 +14,6 @@ signal playback_resumed
 
 @onready var audio_player: AudioStreamPlayer = AudioStreamPlayer.new()
 
-var _midi_resource: Resource = null
 var _is_playing: bool = false
 var _is_paused: bool = false
 var _playback_start_time_ms: float = 0.0
@@ -32,16 +31,11 @@ func _ready() -> void:
 	_audio_delay_timer.timeout.connect(_start_delayed_audio)
 	add_child(_audio_delay_timer)
 
-func load_files(p_audio_stream: AudioStream, p_midi_resource: Resource) -> bool:
+func load_files(p_audio_stream: AudioStream) -> bool:
 	audio_stream = p_audio_stream
-	_midi_resource = p_midi_resource
 	
 	if audio_stream == null:
 		push_error("MusicPlayer: No audio stream provided")
-		return false
-	
-	if _midi_resource == null:
-		push_error("MusicPlayer: No MIDI resource provided")
 		return false
 	
 	audio_player.stream = audio_stream
@@ -51,10 +45,6 @@ func load_files(p_audio_stream: AudioStream, p_midi_resource: Resource) -> bool:
 func start_playback() -> void:
 	if audio_player.stream == null:
 		push_error("MusicPlayer: Cannot start playback - no audio stream loaded")
-		return
-	
-	if _midi_resource == null:
-		push_error("MusicPlayer: Cannot start playback - no MIDI resource loaded")
 		return
 	
 	_is_playing = true
@@ -127,35 +117,7 @@ func get_current_time_ms() -> float:
 	
 	return song_time_ms
 
-func get_tempo_map() -> Array:
-	if _midi_resource == null:
-		push_error("MusicPlayer: No MIDI resource loaded")
-		return _create_default_tempo_map()
-	
-	# Try various possible property/method names for tempo map
-	if "tempo_map" in _midi_resource:
-		return _midi_resource.tempo_map
-	elif "get_tempo_map" in _midi_resource:
-		return _midi_resource.get_tempo_map()
-	elif "tempos" in _midi_resource:
-		return _midi_resource.tempos
-	elif "tempo_events" in _midi_resource:
-		return _midi_resource.tempo_events
-	else:
-		# MidiResource doesn't expose tempo map, create default
-		print("MusicPlayer: Using default tempo map (BPM: %.1f)" % default_bpm)
-		return _create_default_tempo_map()
 
-func _create_default_tempo_map() -> Array:
-	# Create a simple single-tempo map
-	return [{
-		"tick": 0,
-		"bpm": default_bpm,
-		"microseconds_per_quarter_note": 60000000.0 / default_bpm
-	}]
-
-func get_midi_resource() -> Resource:
-	return _midi_resource
 
 func is_playing() -> bool:
 	return _is_playing

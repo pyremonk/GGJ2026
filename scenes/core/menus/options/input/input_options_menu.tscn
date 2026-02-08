@@ -1,11 +1,11 @@
 [gd_scene load_steps=8 format=3 uid="uid://dp3rgqaehb3xu"]
 
-[ext_resource type="Script" uid="uid://eborw7q4b07h" path="res://scenes/core/menus/options_menu/input/input_options_menu.gd" id="1"]
+[ext_resource type="Script" uid="uid://eborw7q4b07h" path="res://scenes/core/menus/options/input/input_options_menu.gd" id="1"]
 [ext_resource type="Script" uid="uid://1nf36h0gms3q" path="res://scripts/core/utilities/capture_focus.gd" id="2_wft4x"]
-[ext_resource type="PackedScene" uid="uid://bxp45814v6ydv" path="res://scenes/core/menus/options_menu/input/input_actions_list.tscn" id="4_lf2nw"]
-[ext_resource type="PackedScene" uid="uid://ci6wgl2ngd35n" path="res://scenes/core/menus/options_menu/input/input_actions_tree.tscn" id="5_b2whh"]
+[ext_resource type="PackedScene" uid="uid://bxp45814v6ydv" path="res://scenes/core/menus/options/input/input_actions_list.tscn" id="4_lf2nw"]
+[ext_resource type="PackedScene" uid="uid://ci6wgl2ngd35n" path="res://scenes/core/menus/options/input/input_actions_tree.tscn" id="5_b2whh"]
 [ext_resource type="PackedScene" uid="uid://cwt4p3bufkke5" path="res://scenes/core/windows/confirmation_overlaid_window.tscn" id="7_5j1ya"]
-[ext_resource type="PackedScene" uid="uid://dgravx3vt5g3i" path="res://scenes/core/menus/options_menu/input/key_assignment_window.tscn" id="7_r3r3g"]
+[ext_resource type="PackedScene" uid="uid://dgravx3vt5g3i" path="res://scenes/core/menus/options/input/key_assignment_window.tscn" id="7_r3r3g"]
 [ext_resource type="PackedScene" uid="uid://6gdbfi0172ji" path="res://scenes/core/windows/overlaid_window.tscn" id="8_jtpjy"]
 
 [node name="Controls" type="MarginContainer"]

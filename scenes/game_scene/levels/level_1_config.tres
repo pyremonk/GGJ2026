@@ -1,6 +1,5 @@
-[gd_resource type="Resource" script_class="LevelConfig" load_steps=3 format=3 uid="uid://xiib7jgby1cx"]
+[gd_resource type="Resource" script_class="LevelConfig" load_steps=2 format=3 uid="uid://xiib7jgby1cx"]
 
-[ext_resource type="MidiResource" uid="uid://dr2m4wli715el" path="res://assets/testing_track/Testing_Track.mid" id="1_0ljyr"]
 [ext_resource type="Script" uid="uid://bv3gmwsjx0bbb" path="res://scripts/level_config.gd" id="1_tf6fp"]
 
 [resource]
@@ -8,7 +7,7 @@ script = ExtResource("1_tf6fp")
 level_name = "Testing the Waters"
 track_name = "Testing Track"
 artist_name = "pyremonk"
-midi_resource = ExtResource("1_0ljyr")
+beat_chart_path = "res://assets/testing_track/Testing_Track.beats.json"
 audio_file_path = "uid://b1h3mivv1u1qf"
 next_level_path = "uid://bwcx7n2y5pmqr"
 default_bpm = 120.0

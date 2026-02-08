@@ -1,0 +1,158 @@
+{
+	"beat_events": [
+		{
+			"beat_number": 0,
+			"direction": "left",
+			"hit_time_ms": 2000.0,
+			"midi_note": 61,
+			"velocity": 127
+		},
+		{
+			"beat_number": 1,
+			"direction": "right",
+			"hit_time_ms": 3000.0,
+			"midi_note": 67,
+			"velocity": 127
+		},
+		{
+			"beat_number": 2,
+			"direction": "right",
+			"hit_time_ms": 4500.0,
+			"midi_note": 67,
+			"velocity": 69
+		},
+		{
+			"beat_number": 3,
+			"direction": "down",
+			"hit_time_ms": 5500.0,
+			"midi_note": 70,
+			"velocity": 127
+		},
+		{
+			"beat_number": 4,
+			"direction": "up",
+			"hit_time_ms": 6500.0,
+			"midi_note": 64,
+			"velocity": 127
+		},
+		{
+			"beat_number": 5,
+			"direction": "right",
+			"hit_time_ms": 7000.0,
+			"midi_note": 67,
+			"velocity": 79
+		},
+		{
+			"beat_number": 6,
+			"direction": "down",
+			"hit_time_ms": 7500.0,
+			"midi_note": 70,
+			"velocity": 127
+		},
+		{
+			"beat_number": 7,
+			"direction": "left",
+			"hit_time_ms": 9000.0,
+			"midi_note": 61,
+			"velocity": 127
+		},
+		{
+			"beat_number": 8,
+			"direction": "up",
+			"hit_time_ms": 10000.0,
+			"midi_note": 64,
+			"velocity": 127
+		},
+		{
+			"beat_number": 9,
+			"direction": "up",
+			"hit_time_ms": 11500.0,
+			"midi_note": 64,
+			"velocity": 127
+		},
+		{
+			"beat_number": 10,
+			"direction": "right",
+			"hit_time_ms": 12000.0,
+			"midi_note": 67,
+			"velocity": 127
+		},
+		{
+			"beat_number": 11,
+			"direction": "right",
+			"hit_time_ms": 13000.0,
+			"midi_note": 67,
+			"velocity": 127
+		},
+		{
+			"beat_number": 12,
+			"direction": "up",
+			"hit_time_ms": 13500.0,
+			"midi_note": 64,
+			"velocity": 89
+		},
+		{
+			"beat_number": 13,
+			"direction": "down",
+			"hit_time_ms": 14500.0,
+			"midi_note": 70,
+			"velocity": 127
+		},
+		{
+			"beat_number": 14,
+			"direction": "left",
+			"hit_time_ms": 15500.0,
+			"midi_note": 61,
+			"velocity": 127
+		},
+		{
+			"beat_number": 15,
+			"direction": "left",
+			"hit_time_ms": 16500.0,
+			"midi_note": 61,
+			"velocity": 127
+		},
+		{
+			"beat_number": 16,
+			"direction": "right",
+			"hit_time_ms": 17000.0,
+			"midi_note": 67,
+			"velocity": 99
+		},
+		{
+			"beat_number": 17,
+			"direction": "right",
+			"hit_time_ms": 18000.0,
+			"midi_note": 67,
+			"velocity": 127
+		},
+		{
+			"beat_number": 18,
+			"direction": "left",
+			"hit_time_ms": 19000.0,
+			"midi_note": 61,
+			"velocity": 127
+		},
+		{
+			"beat_number": 19,
+			"direction": "right",
+			"hit_time_ms": 19500.0,
+			"midi_note": 67,
+			"velocity": 127
+		}
+	],
+	"metadata": {
+		"duration_ms": 19500.0,
+		"generated_timestamp": "2026-02-07 18:18:47",
+		"source_midi": "res://assets/testing_track/Testing_Track.mid",
+		"total_beats": 20,
+		"track_name": "Testing_Track"
+	},
+	"tempo_map": [
+		{
+			"bpm": 120.0,
+			"ppq": 480,
+			"time_ms": 0.0
+		}
+	]
+}

@@ -123,8 +123,12 @@ func _pause_game() -> void:
 			if pause_menu.has_signal("hidden"):
 				pause_menu.hidden.connect(_on_pause_menu_hidden)
 			
-			# Force show the pause menu
-			if pause_menu.has_method("show"):
+			# Open via window API so it can ignore the initial cancel release.
+			if pause_menu.has_method("display_window"):
+				pause_menu.display_window()
+			elif pause_menu.has_method("open_window"):
+				pause_menu.open_window()
+			elif pause_menu.has_method("show"):
 				pause_menu.show()
 
 

@@ -31,7 +31,7 @@ window/stretch/mode="canvas_items"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_midi/plugin.cfg")
+enabled=PackedStringArray("res://addons/beat_chart_generator/plugin.cfg", "res://addons/godot_midi/plugin.cfg")
 
 [gui]
 
