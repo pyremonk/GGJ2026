@@ -4,15 +4,13 @@ A rhythm game built in Godot 4.5.1.
 
 ## Overview
 
-**Last Night at the Masquerade** is a rhythm game where players navigate a masked ball, hitting directional notes in sync with the music. Built for Global Game Jam 2026, this project showcases a sophisticated MIDI-based timing architecture that treats the tempo map as the single source of truth, enabling gameplay regardless of tempo changes.
+**Last Night at the Masquerade** is a rhythm game where players navigate a masked ball, hitting directional notes in sync with the music. Built for Global Game Jam 2026, this project showcases a MIDI-based timing architecture that treats the tempo map as the single source of truth, enabling gameplay regardless of tempo changes.
 
 ### Key Features
 
 - **MIDI-Driven Timing** - Absolute timestamp scheduling with dynamic tempo support
 - **4-Direction Note Gameplay** - Arrow-key-based rhythm mechanics with visual feedback
-- **Grid-Based Combat** - Strategic positioning on a beat-synchronized grid
 - **Modular Architecture** - Event-driven components with clear separation of concerns
-- **Level Progression System** - Non-linear level selection with persistent state tracking
 
 ## Getting Started
 
