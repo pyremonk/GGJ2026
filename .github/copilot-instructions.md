@@ -5,15 +5,15 @@
 ## Architecture Overview
 
 ### Core Game Framework
-Built on **Maaack's Game Template** plugin (`addons/maaacks_game_template/`), providing:
+Built using patterns inspired by Maaack's Game Template, providing:
 - Menu system (main, options, pause, level select)
 - Scene loading infrastructure via `SceneLoader` autoload
-- Persistent state management through `GlobalState` autoload
-- Audio controllers: `ProjectMusicController` and `ProjectUISoundController` (autoloads)
+- Persistent state management through `GlobalState` static class
+- Audio controllers: `ProjectMusicController`, `ProjectUISoundController`, and `MenuMusicManager` (autoloads)
 
 ### State Management Pattern
 Game state uses a two-tier Resource-based system:
-- **GlobalState** (autoload) - Persistent storage singleton managing all game state
+- **GlobalState** (`scripts/core/state/global_state.gd`) - Static class providing persistent storage methods for all game state
 - **GameState** (`scripts/game_state.gd`) - Static wrapper accessing `GlobalState.get_or_create_state(STATE_NAME, FILE_PATH)`
 - **LevelState** (`scripts/level_state.gd`) - Per-level data (tutorial progress, custom properties)
 
@@ -26,7 +26,7 @@ GlobalState.save()  # Always call after modifying state
 
 ### Level Architecture
 - Levels emit `level_won(next_level_path: String)` and `level_lost` signals
-- **LevelManager** (`addons/.../extras/scripts/level_manager.gd`) coordinates level flow
+- **LevelManager** (`scripts/core/managers/level_manager.gd`) coordinates level flow
 - Project extends with `scripts/level_and_state_manager.gd` to sync LevelManager with GameState
 - Level scenes: `scenes/game_scene/levels/*.tscn` inherit from `level.gd`
 
@@ -158,8 +158,9 @@ Use unique node names (`%NodeName`) for in-scene references:
 2. `SceneLoader` - Scene loading/transitions
 3. `ProjectMusicController` - Cross-scene music blending
 4. `ProjectUISoundController` - UI audio management
+5. `MenuMusicManager` - Menu music state management
 
-Access via singleton pattern: `SceneLoader.load_scene(path)`, `GlobalState.save()`
+Access via singleton pattern: `SceneLoader.load_scene(path)`, `GlobalState.save()` (note: GlobalState is a static class, not an autoload)
 
 ## Development Workflows
 
@@ -175,8 +176,9 @@ Saved state: `user://global_state.tres` - Delete to reset all progress
 - Never mix audio playback logic with MIDI parsing
 
 ## Key References
-- **Architecture spec**: `prompt-drafting/overall-architecture.md` (comprehensive rhythm game patterns)
-- **Gameplay design**: `prompt-drafting/gameplay-overview.md` (grid combat, power-ups, scoring)
-- **Template docs**: `addons/maaacks_game_template/README.md`
+- **Architecture spec**: `specs/rhythm-architecture.md` (comprehensive rhythm game patterns)
+- **Gameplay design**: `specs/gameplay-interactions.spec.md` (grid combat, power-ups, scoring)
+- **Note spawning**: `specs/note-spawning.spec.md` (note timing, spawn mechanics)
+- **UI spec**: `specs/ui.spec.md` (UI layout and feedback systems)
 - **State examples**: `scripts/game_state.gd`, `scripts/level_and_state_manager.gd`
 - **Level template**: `scenes/game_scene/levels/level.gd`
